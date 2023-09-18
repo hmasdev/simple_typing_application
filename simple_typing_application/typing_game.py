@@ -17,6 +17,8 @@ from .sentence_generator.base import BaseSentenceGenerator
 from .ui.base import BaseUserInterface
 
 
+# TODO: add various keyboard input monitor.
+
 class TypingGame:
 
     _typing_target_title_color = EColor.YELLOW
@@ -79,8 +81,12 @@ class TypingGame:
     async def _typing_step(self, typing_target: TypingTargetModel):
 
         # preparation
-        output = OutputModel(typing_target=typing_target.model_copy(deep=True), records=[])  # noqa
-        record_queue: queue.Queue = queue.Queue()
+        output = OutputModel(
+            timestamp=dt.now(),
+            typing_target=typing_target.model_copy(deep=True),
+            records=[],
+        )
+        record_queue: queue.Queue = queue.Queue()  # NOTE: it may be redundant.
 
         # define callbacks
         def on_press_callback(key: KeyCode | Key | None):
