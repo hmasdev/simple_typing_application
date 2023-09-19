@@ -1,0 +1,200 @@
+{
+    "timestamp": "2023-09-19T07:55:11.250838",
+    "typing_target": {
+        "text": "今日は晴れています",
+        "text_hiragana_alphabet_symbol": "きょうははれています",
+        "typing_target": [
+            [
+                "kyo",
+                "kixyo",
+                "kilyo"
+            ],
+            [
+                "u",
+                "wu",
+                "whu"
+            ],
+            [
+                "ha"
+            ],
+            [
+                "ha"
+            ],
+            [
+                "re"
+            ],
+            [
+                "te"
+            ],
+            [
+                "i",
+                "yi"
+            ],
+            [
+                "ma"
+            ],
+            [
+                "su"
+            ]
+        ]
+    },
+    "records": [
+        {
+            "timestamp": "2023-09-19T07:55:13.033950",
+            "pressed_key": "k",
+            "correct_keys": [
+                "k"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:13.247133",
+            "pressed_key": "y",
+            "correct_keys": [
+                "y",
+                "i"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:13.328850",
+            "pressed_key": "o",
+            "correct_keys": [
+                "o"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:13.459692",
+            "pressed_key": "u",
+            "correct_keys": [
+                "u",
+                "w"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:13.710452",
+            "pressed_key": "h",
+            "correct_keys": [
+                "h"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:13.833212",
+            "pressed_key": "a",
+            "correct_keys": [
+                "a"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:14.082436",
+            "pressed_key": "h",
+            "correct_keys": [
+                "h"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:14.149610",
+            "pressed_key": "a",
+            "correct_keys": [
+                "a"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:14.326497",
+            "pressed_key": "r",
+            "correct_keys": [
+                "r"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:14.463854",
+            "pressed_key": "e",
+            "correct_keys": [
+                "e"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:14.664098",
+            "pressed_key": "t",
+            "correct_keys": [
+                "t"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:14.770453",
+            "pressed_key": "e",
+            "correct_keys": [
+                "e"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:15.064285",
+            "pressed_key": "r",
+            "correct_keys": [
+                "y",
+                "i"
+            ],
+            "is_correct": false
+        },
+        {
+            "timestamp": "2023-09-19T07:55:15.241220",
+            "pressed_key": "m",
+            "correct_keys": [
+                "y",
+                "i"
+            ],
+            "is_correct": false
+        },
+        {
+            "timestamp": "2023-09-19T07:55:15.831180",
+            "pressed_key": "i",
+            "correct_keys": [
+                "y",
+                "i"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:15.955522",
+            "pressed_key": "m",
+            "correct_keys": [
+                "m"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:16.057121",
+            "pressed_key": "a",
+            "correct_keys": [
+                "a"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:16.117532",
+            "pressed_key": "s",
+            "correct_keys": [
+                "s"
+            ],
+            "is_correct": true
+        },
+        {
+            "timestamp": "2023-09-19T07:55:16.227709",
+            "pressed_key": "u",
+            "correct_keys": [
+                "u"
+            ],
+            "is_correct": true
+        }
+    ]
+}
