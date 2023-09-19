@@ -33,7 +33,11 @@ def load_config(
     # load config
     if os.path.splitext(path)[1] == '.json':
         logger.debug('load json config')
-        config = ConfigModel(**json.load(open(path, 'r', encoding='utf-8')))  # type: ignore  # noqa
+        try:
+            config = ConfigModel(**json.load(open(path, 'r', encoding='utf-8')))  # type: ignore  # noqa
+        except FileNotFoundError:
+            logger.warning(f'config file not found: {path}. So use default config.')  # noqa
+            config = ConfigModel()
         sentence_generator_config = SENTENCE_GENERATOR_TYPE_TO_CONFIG_MODEL[config.sentence_generator_type](**config.sentence_generator_config)  # type: ignore  # noqa
         user_interface_config = USER_INTERFACE_TYPE_TO_CONFIG_MODEL[config.user_interface_type](**config.user_interface_config)  # type: ignore  # noqa
     elif os.path.splitext(path)[1] in ['.yaml', '.yml']:

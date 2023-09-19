@@ -1,3 +1,4 @@
+import os
 import pytest
 from simple_typing_application.models.config_model import (
     ConfigModel,
@@ -36,6 +37,27 @@ def test_load_config_json(mocker):
     )
 
     # run
+    actual = load_config(path)
+
+    # assert
+    assert actual == expected
+
+
+def test_load_config_json_not_found(mocker):
+
+    # mock
+    mocker.patch('builtins.open', side_effect=FileNotFoundError)
+
+    # preparation
+    path = 'does_not_exist.json'
+    expected = (
+        ConfigModel(),
+        OpenAISentenceGeneratorConfigModel(),
+        ConsoleUserInterfaceConfigModel(),
+    )
+
+    # run
+    assert not os.path.exists(path)
     actual = load_config(path)
 
     # assert
