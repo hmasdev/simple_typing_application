@@ -1,0 +1,6 @@
+click
+langchain
+openai
+pydantic
+pynput
+types-pynput
