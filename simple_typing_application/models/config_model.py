@@ -18,7 +18,7 @@ class OpenAISentenceGeneratorConfigModel(BaseSentenceGeneratorConfigModel):
     model: str = 'gpt-3.5-turbo-16k'
     temperature: float = 0.7
     openai_api_key: str | None = None
-    memory_size: int = 1
+    memory_size: int = 0
     max_retry: int = 5
 
 

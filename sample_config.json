@@ -4,7 +4,7 @@
         "model": "gpt-3.5-turbo-16k",
         "temperature": 0.7,
         "openai_api_key": "HERE_IS_YOUR_API_KEY",
-        "memory_size": 1,
+        "memory_size": 0,
         "max_retry": 5
     },
     "user_interface_type": "CONSOLE",
