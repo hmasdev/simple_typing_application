@@ -33,7 +33,9 @@ pip install git+https://github.com/hmasdev/simple_typing_application.git
 If you want to install the full-version, i.e. `simple_typing_application` with data analysis packages like `pandas`, `matplotlib` and `jupyterlab`, specify `[extra]`.
 
 ```bash
-pip install git+https://github.com/hmasdev/simple_typing_application.git[extra]
+git clone https://github.com/hmasdev/simple_typing_application.git
+cd simple_typing_application
+pip install .[extra]
 ```
 
 ## Usage
