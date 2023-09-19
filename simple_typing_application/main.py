@@ -41,7 +41,7 @@ def create_user_interface(
 
 
 @click.command()
-@click.option('--config-path', '-c', default='./config.json', help='path to config file.')  # noqa
+@click.option('--config-path', '-c', default='./config.json', help='path to config file. Defaults to ./config.json')  # noqa
 @click.option('--debug', '-d', is_flag=True, help='debug mode.')
 def main(config_path: str, debug: bool):
 
