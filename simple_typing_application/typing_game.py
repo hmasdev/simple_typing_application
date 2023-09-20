@@ -105,7 +105,7 @@ class TypingGame:
                 _exit()
 
             elif key == Key.space:
-                correct, typing_target.typing_target = self.is_correct(' ', typing_target.typing_target)    # type: ignore  # noqa
+                correct, typing_target.typing_target = self._is_correct(' ', typing_target.typing_target)    # type: ignore  # noqa
                 pressed_key = ' '
                 self._ui.show_user_input(' ')
 
