@@ -156,6 +156,26 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
                         target_flag = False
                         break
 
+                if not target_flag:
+                    continue  # Skip this candidate.
+
+                # join
+                _joined = ''.join([
+                    x if x is not None else y[0]  # type: ignore
+                    # NOTE: when x is None, y is not None. See the above for-loop.  # noqa
+                    for x, y in zip(candidate, candidate[1:] + (None,))
+                ])
+
+                # invalid repetition patterns
+                if 'xxtsu' in _joined:
+                    # NOTE: 'xxtsu' -> 'ｘっ'
+                    target_flag = False
+                    continue
+                if 'lltsu' in _joined:
+                    # NOTE: 'lltsu' -> 'ｌっ'
+                    target_flag = False
+                    continue
+
                 # target registration
                 if target_flag:
                     _target.append(''.join([
@@ -163,13 +183,6 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
                         # NOTE: when x is None, y is not None. See the above for-loop.  # noqa
                         for x, y in zip(candidate, candidate[1:] + (None,))
                     ]))
-
-                # clean
-                # TODO: improve this code
-                if 'xxtsuto' in _target:
-                    _target.remove('xxtsuto')  # NOTE: 'xxtsuto' -> 'ｘっと'
-                if 'lltsuto' in _target:
-                    _target.remove('lltsuto')  # NOTE: 'lltsuto' -> 'ｌっと'
 
             typing_targets.append(_target)
 

@@ -21,6 +21,7 @@ from simple_typing_application.sentence_generator.utils import (
         ),
         ('あっ', ['あ', 'っ']),
         # Unusual but acceptable cases
+        ('っっ', ['っっ']),
         ('ふぁぁ', ['ふぁぁ']),  # NOTE: 'ふぁぁ' is not in HIRA2ROMA_MAP.
         ('あぁぁ', ['あぁぁ']),  # NOTE: 'あぁぁ' is not in HIRA2ROMA_MAP.
         ('っきゃぁ', ['っきゃぁ']),
@@ -103,6 +104,21 @@ def test_split_hiraganas_alphabets_symbols(
         (
             ['あ', 'っ'],
             [['a'], ['xtu', 'xtsu', 'ltu', 'ltsu']],
+        ),
+        (
+            ['っっ'],
+            [[
+                # 'っ' and 'っと'
+                'xtuxtu', 'xtuxtsu', 'xtultu', 'xtultsu',
+                'xtsuxtu', 'xtsuxtsu', 'xtsultu', 'xtsultsu',
+                'ltuxtu', 'ltuxtsu', 'ltultu', 'ltultsu',
+                'ltsuxtu', 'ltsuxtsu', 'ltsultu', 'ltsultsu',
+                # 　'っっ' and 'と'
+                'xxtu',
+                # 'xxtsu',  # NOTE: 'xxtsu' -> 'ｘっ'
+                'lltu',
+                # 'lltsu',  # NOTE: 'lltsu' -> 'ｌっ'
+            ]]
         ),
         (
             ['っっと'],
