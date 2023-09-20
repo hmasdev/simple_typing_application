@@ -20,6 +20,12 @@ from simple_typing_application.sentence_generator.utils import (
             ['あ', 'し', 'た', 'は', 'あ', 'め', 'が', 'ふ', 'る', 'か', 'も', 'し', 'れ', 'ま', 'せ', 'ん'],  # noqa
         ),
         ('あっ', ['あ', 'っ']),
+        # Unusual but acceptable cases
+        ('っっ', ['っっ']),
+        ('ふぁぁ', ['ふぁぁ']),  # NOTE: 'ふぁぁ' is not in HIRA2ROMA_MAP.
+        ('あぁぁ', ['あぁぁ']),  # NOTE: 'あぁぁ' is not in HIRA2ROMA_MAP.
+        ('っきゃぁ', ['っきゃぁ']),
+        ('ぁぁ', ['ぁぁ']),
     ],
 )
 def test_split_hiraganas_alphabets_symbols(
@@ -100,6 +106,21 @@ def test_split_hiraganas_alphabets_symbols(
             [['a'], ['xtu', 'xtsu', 'ltu', 'ltsu']],
         ),
         (
+            ['っっ'],
+            [[
+                # 'っ' and 'っと'
+                'xtuxtu', 'xtuxtsu', 'xtultu', 'xtultsu',
+                'xtsuxtu', 'xtsuxtsu', 'xtsultu', 'xtsultsu',
+                'ltuxtu', 'ltuxtsu', 'ltultu', 'ltultsu',
+                'ltsuxtu', 'ltsuxtsu', 'ltsultu', 'ltsultsu',
+                # 　'っっ' and 'と'
+                'xxtu',
+                # 'xxtsu',  # NOTE: 'xxtsu' -> 'ｘっ'
+                'lltu',
+                # 'lltsu',  # NOTE: 'lltsu' -> 'ｌっ'
+            ]]
+        ),
+        (
             ['っっと'],
             [[
                 # 'っ' and 'っと'
@@ -125,6 +146,33 @@ def test_split_hiraganas_alphabets_symbols(
                 "n'n'", "xnn'", 'nnxn', "n'xn", "xnxn",
             ]],
         ),
+        # Unusual but acceptable cases
+        (
+            ['ふぁぁ'],
+            [[
+                'faxa', 'fuxaxa', 'huxaxa', 'fulaxa', 'hulaxa',
+                'fala', 'fuxala', 'huxala', 'fulala', 'hulala',
+            ]],
+        ),  # NOTE: 'ふぁぁ' is not in HIRA2ROMA_MAP.
+        (
+            ['あぁぁ'],
+            [['axaxa', 'alaxa', 'axala', 'alala']],
+        ),  # NOTE: 'あぁぁ' is not in HIRA2ROMA_MAP.
+        (
+            ['っきゃぁ'],
+            [[
+                'kkyaxa', "xtukyaxa", "xtsukyaxa", "ltukyaxa", "ltsukyaxa",
+                'kkixyaxa', "xtukixyaxa", "xtsukixyaxa", "ltukixyaxa", "ltsukixyaxa",  # noqa
+                'kkilyaxa', "xtukilyaxa", "xtsukilyaxa", "ltukilyaxa", "ltsukilyaxa",  # noqa
+                'kkyala', "xtukyala", "xtsukyala", "ltukyala", "ltsukyala",
+                'kkixyala', "xtukixyala", "xtsukixyala", "ltukixyala", "ltsukixyala",  # noqa
+                'kkilyala', "xtukilyala", "xtsukilyala", "ltukilyala", "ltsukilyala",  # noqa
+            ]]
+        ),
+        (
+            ['ぁぁ'],
+            [['xaxa', 'laxa', 'xala', 'lala']],
+        )
     ],
 )
 def test_splitted_hiraganas_alphabets_symbols_to_typing_target(
@@ -135,10 +183,11 @@ def test_splitted_hiraganas_alphabets_symbols_to_typing_target(
 
     # sort the list of list
     # NOTE: the order of the list of list is not important.
-    expected = [sorted(x) for x in expected]
-    actual = [sorted(x) for x in actual]
+    expected_sorted = [sorted(x) for x in expected]
+    actual_sorted = [sorted(x) for x in actual]
 
-    assert actual == expected
+    assert actual_sorted == actual  # NOTE: check the order of the list of list
+    assert actual_sorted == expected_sorted
 
 
 def test_splitted_hiraganas_alphabets_symbols_to_typing_target_raise_error():

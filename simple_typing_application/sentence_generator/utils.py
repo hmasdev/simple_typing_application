@@ -1,4 +1,5 @@
 import itertools
+from logging import getLogger, Logger
 from ..const.hiragana_romaji_map import HIRA2ROMA_MAP, SMALL_HIRA2ROMA_MAP
 
 
@@ -27,6 +28,19 @@ def split_hiraganas_alphabets_symbols(s: str) -> list[str]:
     >>> s = 'あっ、なんなん？'
     >>> split_hiraganas_alphabets_symbols(s)
     ['あ', 'っ、', 'な', 'んな', 'ん？']
+    >>> # Unusual but acceptable cases
+    >>> s = 'っっ'
+    >>> split_hiraganas_alphabets_symbols(s)
+    ['っっ']
+    >>> s = 'ふぁぁ'
+    >>> split_hiraganas_alphabets_symbols(s)
+    ['ふぁぁ']
+    >>> s = 'あぁぁ'
+    >>> split_hiraganas_alphabets_symbols(s)
+    ['あぁぁ']
+    >>> s = 'っきゃぁ'
+    >>> split_hiraganas_alphabets_symbols(s)
+    ['っきゃぁ']
     '''
     # split hiraganas into patterns
     patterns: list[str] = []
@@ -52,11 +66,13 @@ def split_hiraganas_alphabets_symbols(s: str) -> list[str]:
 
 def splitted_hiraganas_alphabets_symbols_to_typing_target(
     splitted_patterns: list[str],
+    logger: Logger = getLogger(__name__),
 ) -> list[list[str]]:
     '''Convert a list of splitted hiraganas, alphabets, and symbols into a typing target.
 
     Args:
         splitted_patterns (list[str]): a list of splitted hiraganas, alphabets, and symbols.
+        logger (Logger, optional): a logger. Defaults to getLogger(__name__).
 
     Returns:
         list[list[str]]: a typing target.
@@ -64,7 +80,17 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
     Examples:
     >>> splitted_patterns = ['こ', 'んに', 'ち', 'は']
     >>> splitted_hiraganas_alphabets_symbols_to_typing_target(splitted_patterns)
-    [['ko', 'co'], ['nnni', "n'ni", 'xnni'], ['ti', 'chi'], ['ha']]
+    [['co', 'ko'], ["n'ni", 'nnni', 'xnni'], ['chi', 'ti'], ['ha']]
+    >>> splitted_patterns = ['あ', 'っと', 'い', 'う', 'ま']
+    >>> splitted_hiraganas_alphabets_symbols_to_typ/ing_target(splitted_patterns)
+    [['a'], ['ltsuto', 'ltuto', 'tto', 'xtsuto', 'xtuto'], ['i', 'yi'], ['u', 'whu', 'wu'], ['ma']]
+    >>> # Unusual but acceptable cases
+    >>> splitted_patterns = ['っっ']
+    >>> splitted_hiraganas_alphabets_symbols_to_typing_target(splitted_patterns)
+    [['lltu', 'ltsultsu', 'ltsultu', 'ltsuxtsu', 'ltsuxtu', 'ltultsu', 'ltultu', 'ltuxtsu', 'ltuxtu', 'xtsultsu', 'xtsultu', 'xtsuxtsu', 'xtsuxtu', 'xtultsu', 'xtultu', 'xtuxtsu', 'xtuxtu', 'xxtu']]
+    >>> splitted_patterns = ['っあ']
+    >>> splitted_hiraganas_alphabets_symbols_to_typing_target(splitted_patterns)
+    [['ltsua', 'ltua', 'xtsua', 'xtua']]
     '''  # noqa
 
     # initialize
@@ -102,7 +128,8 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
             # NOTE: Assume that HIRA2ROMA_MAP[pattern] does not contain None when pattern is in HIRA2ROMA_MAP.  # noqa
             typing_targets.append(HIRA2ROMA_MAP[pattern])  # type: ignore
 
-        elif pattern.startswith('ん') or pattern.startswith('っ'):
+        else:
+            logger.warning(f'This pattern "{pattern}" may cause unexpected behavior.')  # noqa
 
             # initialize
             _target = []
@@ -110,7 +137,11 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
             # split
             _splitted: list[str] = []
             for c in pattern:
-                if c in SMALL_HIRA2ROMA_MAP:
+                if (
+                    c in SMALL_HIRA2ROMA_MAP
+                    and len(_splitted) > 0
+                    and _splitted[-1] + c in HIRA2ROMA_MAP
+                ):
                     _splitted[-1] += c
                 else:
                     _splitted.append(c)
@@ -118,7 +149,7 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
             # extract typing targets from candidates
             candidate: tuple[str | None, ...]
             for candidate in itertools.product(*[
-                HIRA2ROMA_MAP[c] if c in HIRA2ROMA_MAP else [c]
+                HIRA2ROMA_MAP.get(c, SMALL_HIRA2ROMA_MAP.get(c, [c]))
                 for c in _splitted
             ]):
 
@@ -148,6 +179,26 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
                         target_flag = False
                         break
 
+                if not target_flag:
+                    continue  # Skip this candidate.
+
+                # join
+                _joined = ''.join([
+                    x if x is not None else y[0]  # type: ignore
+                    # NOTE: when x is None, y is not None. See the above for-loop.  # noqa
+                    for x, y in zip(candidate, candidate[1:] + (None,))
+                ])
+
+                # invalid repetition patterns
+                if 'xxtsu' in _joined:
+                    # NOTE: 'xxtsu' -> 'ｘっ'
+                    target_flag = False
+                    continue
+                if 'lltsu' in _joined:
+                    # NOTE: 'lltsu' -> 'ｌっ'
+                    target_flag = False
+                    continue
+
                 # target registration
                 if target_flag:
                     _target.append(''.join([
@@ -156,22 +207,18 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
                         for x, y in zip(candidate, candidate[1:] + (None,))
                     ]))
 
-                # clean
-                # TODO: improve this code
-                if 'xxtsuto' in _target:
-                    _target.remove('xxtsuto')  # NOTE: 'xxtsuto' -> 'ｘっと'
-                if 'lltsuto' in _target:
-                    _target.remove('lltsuto')  # NOTE: 'lltsuto' -> 'ｌっと'
-
             typing_targets.append(_target)
-
-        else:
-            raise ValueError(f'Invalid pattern: {pattern}')
 
     # check
     for targets in typing_targets:
         for target in targets:
-            if 'ぁ' <= target <= 'ゔ':
+            if not target.isascii() and target != '¥':
                 raise ValueError(f'Invalid typing target: {target}')
+
+    # clean
+    typing_targets = [
+        sorted(set(targets))
+        for targets in typing_targets
+    ]
 
     return typing_targets
