@@ -104,6 +104,9 @@ class TypingGame:
             if key == Key.esc:
                 _exit()
 
+            elif key == Key.tab:
+                _skip()
+
             elif key == Key.space:
                 correct, typing_target.typing_target = self._is_correct(' ', typing_target.typing_target)    # type: ignore  # noqa
                 pressed_key = ' '
@@ -141,9 +144,13 @@ class TypingGame:
 
         def _done():
             nonlocal listener  # type: ignore
-            nonlocal output
-
             self._ui.system_anounce('DONE!', color=self._system_anounce_color)
+            listener.stop()
+            del listener
+
+        def _skip():
+            nonlocal listener
+            self._ui.system_anounce('SKIP!', color=self._system_anounce_color)
             listener.stop()
             del listener
 
