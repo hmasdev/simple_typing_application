@@ -28,6 +28,19 @@ def split_hiraganas_alphabets_symbols(s: str) -> list[str]:
     >>> s = 'あっ、なんなん？'
     >>> split_hiraganas_alphabets_symbols(s)
     ['あ', 'っ、', 'な', 'んな', 'ん？']
+    >>> # Unusual but acceptable cases
+    >>> s = 'っっ'
+    >>> split_hiraganas_alphabets_symbols(s)
+    ['っっ']
+    >>> s = 'ふぁぁ'
+    >>> split_hiraganas_alphabets_symbols(s)
+    ['ふぁぁ']
+    >>> s = 'あぁぁ'
+    >>> split_hiraganas_alphabets_symbols(s)
+    ['あぁぁ']
+    >>> s = 'っきゃぁ'
+    >>> split_hiraganas_alphabets_symbols(s)
+    ['っきゃぁ']
     '''
     # split hiraganas into patterns
     patterns: list[str] = []
@@ -67,7 +80,17 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
     Examples:
     >>> splitted_patterns = ['こ', 'んに', 'ち', 'は']
     >>> splitted_hiraganas_alphabets_symbols_to_typing_target(splitted_patterns)
-    [['ko', 'co'], ['nnni', "n'ni", 'xnni'], ['ti', 'chi'], ['ha']]
+    [['co', 'ko'], ["n'ni", 'nnni', 'xnni'], ['chi', 'ti'], ['ha']]
+    >>> splitted_patterns = ['あ', 'っと', 'い', 'う', 'ま']
+    >>> splitted_hiraganas_alphabets_symbols_to_typ/ing_target(splitted_patterns)
+    [['a'], ['ltsuto', 'ltuto', 'tto', 'xtsuto', 'xtuto'], ['i', 'yi'], ['u', 'whu', 'wu'], ['ma']]
+    >>> # Unusual but acceptable cases
+    >>> splitted_patterns = ['っっ']
+    >>> splitted_hiraganas_alphabets_symbols_to_typing_target(splitted_patterns)
+    [['lltu', 'ltsultsu', 'ltsultu', 'ltsuxtsu', 'ltsuxtu', 'ltultsu', 'ltultu', 'ltuxtsu', 'ltuxtu', 'xtsultsu', 'xtsultu', 'xtsuxtsu', 'xtsuxtu', 'xtultsu', 'xtultu', 'xtuxtsu', 'xtuxtu', 'xxtu']]
+    >>> splitted_patterns = ['っあ']
+    >>> splitted_hiraganas_alphabets_symbols_to_typing_target(splitted_patterns)
+    [['ltsua', 'ltua', 'xtsua', 'xtua']]
     '''  # noqa
 
     # initialize
@@ -191,5 +214,11 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
         for target in targets:
             if not target.isascii() and target != '¥':
                 raise ValueError(f'Invalid typing target: {target}')
+
+    # clean
+    typing_targets = [
+        sorted(set(targets))
+        for targets in typing_targets
+    ]
 
     return typing_targets

@@ -183,10 +183,11 @@ def test_splitted_hiraganas_alphabets_symbols_to_typing_target(
 
     # sort the list of list
     # NOTE: the order of the list of list is not important.
-    expected = [sorted(x) for x in expected]
-    actual = [sorted(x) for x in actual]
+    expected_sorted = [sorted(x) for x in expected]
+    actual_sorted = [sorted(x) for x in actual]
 
-    assert actual == expected
+    assert actual_sorted == actual  # NOTE: check the order of the list of list
+    assert actual_sorted == expected_sorted
 
 
 def test_splitted_hiraganas_alphabets_symbols_to_typing_target_raise_error():
