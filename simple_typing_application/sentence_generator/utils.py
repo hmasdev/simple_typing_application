@@ -1,4 +1,5 @@
 import itertools
+from logging import getLogger, Logger
 from ..const.hiragana_romaji_map import HIRA2ROMA_MAP, SMALL_HIRA2ROMA_MAP
 
 
@@ -52,11 +53,13 @@ def split_hiraganas_alphabets_symbols(s: str) -> list[str]:
 
 def splitted_hiraganas_alphabets_symbols_to_typing_target(
     splitted_patterns: list[str],
+    logger: Logger = getLogger(__name__),
 ) -> list[list[str]]:
     '''Convert a list of splitted hiraganas, alphabets, and symbols into a typing target.
 
     Args:
         splitted_patterns (list[str]): a list of splitted hiraganas, alphabets, and symbols.
+        logger (Logger, optional): a logger. Defaults to getLogger(__name__).
 
     Returns:
         list[list[str]]: a typing target.
@@ -102,7 +105,8 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
             # NOTE: Assume that HIRA2ROMA_MAP[pattern] does not contain None when pattern is in HIRA2ROMA_MAP.  # noqa
             typing_targets.append(HIRA2ROMA_MAP[pattern])  # type: ignore
 
-        elif pattern.startswith('ん') or pattern.startswith('っ'):
+        else:
+            logger.warning(f'This pattern "{pattern}" may cause unexpected behavior.')  # noqa
 
             # initialize
             _target = []
@@ -110,7 +114,11 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
             # split
             _splitted: list[str] = []
             for c in pattern:
-                if c in SMALL_HIRA2ROMA_MAP:
+                if (
+                    c in SMALL_HIRA2ROMA_MAP
+                    and len(_splitted) > 0
+                    and _splitted[-1] + c in HIRA2ROMA_MAP
+                ):
                     _splitted[-1] += c
                 else:
                     _splitted.append(c)
@@ -118,7 +126,7 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
             # extract typing targets from candidates
             candidate: tuple[str | None, ...]
             for candidate in itertools.product(*[
-                HIRA2ROMA_MAP[c] if c in HIRA2ROMA_MAP else [c]
+                HIRA2ROMA_MAP.get(c, SMALL_HIRA2ROMA_MAP.get(c, [c]))
                 for c in _splitted
             ]):
 
@@ -165,13 +173,10 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
 
             typing_targets.append(_target)
 
-        else:
-            raise ValueError(f'Invalid pattern: {pattern}')
-
     # check
     for targets in typing_targets:
         for target in targets:
-            if 'ぁ' <= target <= 'ゔ':
+            if not target.isascii() and target != '¥':
                 raise ValueError(f'Invalid typing target: {target}')
 
     return typing_targets
