@@ -82,7 +82,7 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
     >>> splitted_hiraganas_alphabets_symbols_to_typing_target(splitted_patterns)
     [['co', 'ko'], ["n'ni", 'nnni', 'xnni'], ['chi', 'ti'], ['ha']]
     >>> splitted_patterns = ['あ', 'っと', 'い', 'う', 'ま']
-    >>> splitted_hiraganas_alphabets_symbols_to_typ/ing_target(splitted_patterns)
+    >>> splitted_hiraganas_alphabets_symbols_to_typing_target(splitted_patterns)
     [['a'], ['ltsuto', 'ltuto', 'tto', 'xtsuto', 'xtuto'], ['i', 'yi'], ['u', 'whu', 'wu'], ['ma']]
     >>> # Unusual but acceptable cases
     >>> splitted_patterns = ['っっ']

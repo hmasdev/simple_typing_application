@@ -149,7 +149,7 @@ class TypingGame:
             del listener
 
         def _skip():
-            nonlocal listener
+            nonlocal listener  # type: ignore
             self._ui.system_anounce('SKIP!', color=self._system_anounce_color)
             listener.stop()
             del listener

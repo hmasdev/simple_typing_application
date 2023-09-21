@@ -1,3 +1,9 @@
+import requests
+import time
+
+from ..const.hiragana_katakana_map import KATAKANA2HIRAGANA_MAP
+from .rerun import rerun_deco
+
 
 def is_hiragana(c: str) -> bool:
     '''Check if a character is a hiragana.
@@ -48,3 +54,47 @@ def delete_space_between_hiraganas(s: str) -> str:
         ])
         + s[-1:]
     )
+
+
+def excelapi_kanji2kana(
+    text: str,
+    transform_katakana_to_hiragana: bool = True,
+    max_retry: int = 3,
+    interval_sec: float = 3.,
+) -> str:
+    '''Convert kanji to kana using excelapi.org.
+
+    Args:
+        text (str): a string including kanji.
+        transform_katakana_to_hiragana (bool, optional): if True, transform katakana to hiragana. Defaults to True.
+        max_retry (int, optional): max number of retries. Defaults to 3.
+        interval_sec (float, optional): interval seconds between retries. Defaults to 3.
+
+    Returns:
+        str: a string including kana.
+
+    Raises:
+        requests.exceptions.HTTPError: if the status code is not 20x.
+        simple_typing_application.utils.rerun.MaxRetryError: if requests.get fails max_retry times.
+
+    NOTE:
+        ref. https://excelapi.org/docs/language/kanji2kana/
+    '''  # noqa
+
+    url = f'https://api.excelapi.org/language/kanji2kana?text={text}'
+    response = rerun_deco(
+        requests.get,
+        max_retry=max_retry,
+        callback=lambda *args, **kwargs: time.sleep(interval_sec),
+    )(url)
+
+    # chech status code
+    response.raise_for_status()
+    transformed_text: str = response.text
+
+    # katakana -> hiragana
+    if transform_katakana_to_hiragana:
+        for k, h in KATAKANA2HIRAGANA_MAP.items():
+            transformed_text = transformed_text.replace(k, h)
+
+    return transformed_text

@@ -1,5 +1,7 @@
 import asyncio
+import os
 from unittest.mock import AsyncMock
+import pytest
 from simple_typing_application.models.typing_target_model import TypingTargetModel  # noqa
 from simple_typing_application.sentence_generator.base import BaseSentenceGenerator  # noqa
 from simple_typing_application.sentence_generator.openai_sentence_generator import OpenaiSentenceGenerator  # noqa
@@ -125,3 +127,14 @@ def test_generate(mocker):
 
     # assert
     assert actual == expected
+
+
+@pytest.mark.integrate
+@pytest.mark.skipif(
+    os.getenv('OPENAI_API_KEY') is None,
+    reason='Environment variable "OPENAI_API_KEY" is not set.'
+)
+def test_generate_integrate():
+    # execute
+    asyncio.run(OpenaiSentenceGenerator().generate())
+    # TODO: assert
