@@ -10,6 +10,7 @@ from .models.config_model import (
     BaseUserInterfaceConfigModel
 )
 from .sentence_generator.base import BaseSentenceGenerator
+from .sentence_generator.huggingface_sentence_generator import HuggingfaceSentenceGenerator  # noqa
 from .sentence_generator.openai_sentence_generator import OpenaiSentenceGenerator  # noqa
 from .typing_game import TypingGame
 from .ui.base import BaseUserInterface
@@ -24,6 +25,9 @@ def create_sentence_generator(
     if sentence_generator_type == ESentenceGeneratorType.OPENAI:
         logger.debug('create OpenaiSentenceGenerator')
         return OpenaiSentenceGenerator(**sentence_generator_config.model_dump())  # noqa
+    elif sentence_generator_type == ESentenceGeneratorType.HUGGINGFACE:
+        logger.debug('create HuggingfaceSentenceGenerator')
+        return HuggingfaceSentenceGenerator(**sentence_generator_config.model_dump())  # noqa
     else:
         raise ValueError(f'Unsupported sentence generator type: {sentence_generator_type}')  # noqa
 

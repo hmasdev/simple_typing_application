@@ -3,4 +3,12 @@ langchain
 openai
 pydantic
 pynput
+requests
 types-pynput
+types-requests
+--extra-index-url https://download.pytorch.org/whl/cu117
+torch
+accelerate
+protobuf
+transformers
+sentencepiece

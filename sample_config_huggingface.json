@@ -1,0 +1,14 @@
+{
+    "sentence_generator_type": "HUGGINGFACE",
+    "sentence_generator_config": {
+        "model": "line-corporation/japanese-large-lm-3.6b",
+        "do_sample": true,
+        "max_length": 100,
+        "top_k": 50,
+        "top_p": 0.95,
+        "device": "cuda"
+    },
+    "user_interface_type": "CONSOLE",
+    "user_interface_config": {},
+    "record_direc": "./record"
+}

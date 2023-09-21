@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 class ESentenceGeneratorType(Enum):
     OPENAI: str = 'OPENAI'
+    HUGGINGFACE: str = 'HUGGINGFACE'
 
 
 class EUserInterfaceType(Enum):
@@ -20,6 +21,15 @@ class OpenAISentenceGeneratorConfigModel(BaseSentenceGeneratorConfigModel):
     openai_api_key: str | None = None
     memory_size: int = 0
     max_retry: int = 5
+
+
+class HuggingfaceSentenceGeneratorConfigModel(BaseSentenceGeneratorConfigModel):  # noqa
+    model: str = 'line-corporation/japanese-large-lm-3.6b'
+    max_length: int = 100
+    do_sample: bool = True
+    top_k: int = 50
+    top_p: float = 0.95
+    device: str = 'cuda'
 
 
 class BaseUserInterfaceConfigModel(BaseModel):
@@ -42,6 +52,7 @@ class ConfigModel(BaseModel):
 
 SENTENCE_GENERATOR_TYPE_TO_CONFIG_MODEL: dict[ESentenceGeneratorType, BaseModel] = {  # noqa
     ESentenceGeneratorType.OPENAI: OpenAISentenceGeneratorConfigModel,  # type: ignore  # noqa
+    ESentenceGeneratorType.HUGGINGFACE: HuggingfaceSentenceGeneratorConfigModel,  # type: ignore  # noqa
 }
 
 USER_INTERFACE_TYPE_TO_CONFIG_MODEL: dict[EUserInterfaceType, BaseModel] = {  # noqa
