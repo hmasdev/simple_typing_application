@@ -1,0 +1,15 @@
+{
+    "sentence_generator_type": "STATIC",
+    "sentence_generator_config": {
+        "text_kana_map": {
+            "本日は晴天なり。": "ほんじつはせいてんなり。",
+            "今日は雨だ。": "きょうはあめだ。",
+            "明日は曇りだ。": "あしたはくもりだ。",
+            "Hello World.": "Hello World."
+        },
+        "is_random": false
+    },
+    "user_interface_type": "CONSOLE",
+    "user_interface_config": {},
+    "record_direc": "./record"
+}
