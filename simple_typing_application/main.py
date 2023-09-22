@@ -20,11 +20,11 @@ def main(config_path: str, debug: bool):
         basicConfig(level=INFO)
 
     # load config
-    config, sentence_generator_config, user_interface_config = load_config(config_path)  # noqa
+    config = load_config(config_path)  # noqa
 
     # initialize
-    sentence_generator = create_sentence_generator(config.sentence_generator_type, sentence_generator_config)  # noqa
-    ui = create_user_interface(config.user_interface_type, user_interface_config)  # noqa
+    sentence_generator = create_sentence_generator(config.sentence_generator_type, config.sentence_generator_config)  # noqa
+    ui = create_user_interface(config.user_interface_type, config.user_interface_config)  # noqa
     record_direc = config.record_direc
 
     game = TypingGame(sentence_generator, ui, record_direc)

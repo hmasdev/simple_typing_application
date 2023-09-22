@@ -1,7 +1,7 @@
 import pytest
 
-from simple_typing_application.models.config_model import (
-    ESentenceGeneratorType,
+from simple_typing_application.const.sentence_generator import ESentenceGeneratorType  # noqa
+from simple_typing_application.models.config_models.sentence_generator_config_model import (  # noqa
     BaseSentenceGeneratorConfigModel,
     OpenAISentenceGeneratorConfigModel,
     HuggingfaceSentenceGeneratorConfigModel,
@@ -14,28 +14,43 @@ from simple_typing_application.sentence_generator.static_sentence_generator impo
 
 
 @pytest.mark.parametrize(
-    "sentence_generator_type, sentence_generator_config, expected_class",
+    "sentence_generator_type, sentence_generator_config_dict, expected_class",
     [
         (
             ESentenceGeneratorType.OPENAI,
-            OpenAISentenceGeneratorConfigModel(),
+            OpenAISentenceGeneratorConfigModel().model_dump(),
             OpenaiSentenceGenerator,
         ),
         (
             ESentenceGeneratorType.HUGGINGFACE,
-            HuggingfaceSentenceGeneratorConfigModel(),
+            HuggingfaceSentenceGeneratorConfigModel().model_dump(),
             HuggingfaceSentenceGenerator,
         ),
         (
             ESentenceGeneratorType.STATIC,
-            StaticSentenceGeneratorConfigModel(text_kana_map={}),
+            StaticSentenceGeneratorConfigModel(text_kana_map={}).model_dump(),
+            StaticSentenceGenerator,
+        ),
+        (
+            ESentenceGeneratorType.OPENAI,
+            {},
+            OpenaiSentenceGenerator,
+        ),
+        (
+            ESentenceGeneratorType.HUGGINGFACE,
+            {},
+            HuggingfaceSentenceGenerator,
+        ),
+        (
+            ESentenceGeneratorType.STATIC,
+            {},
             StaticSentenceGenerator,
         ),
     ]
 )
 def test_create_sentence_generator(
     sentence_generator_type: ESentenceGeneratorType,
-    sentence_generator_config: BaseSentenceGeneratorConfigModel,
+    sentence_generator_config_dict: dict[str, str | float | int | bool | None | dict | list],  # noqa
     expected_class: type,
     mocker,
 ):
@@ -55,7 +70,7 @@ def test_create_sentence_generator(
     # execute
     sentence_generator = create_sentence_generator(
         sentence_generator_type,
-        sentence_generator_config,
+        sentence_generator_config_dict,
     )
 
     # assert
