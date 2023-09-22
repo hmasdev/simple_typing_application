@@ -3,26 +3,9 @@ from logging import basicConfig, DEBUG, getLogger, INFO, Logger
 import click
 
 from .config import load_config
-from .models.config_model import (
-    EUserInterfaceType,
-    BaseUserInterfaceConfigModel
-)
 from .sentence_generator import create_sentence_generator
 from .typing_game import TypingGame
-from .ui.base import BaseUserInterface
-from .ui.cui import ConsoleUserInterface
-
-
-def create_user_interface(
-    user_interface_type: EUserInterfaceType,
-    user_interface_config: BaseUserInterfaceConfigModel,
-    logger: Logger = getLogger(__name__),
-) -> BaseUserInterface:
-    if user_interface_type == EUserInterfaceType.CONSOLE:
-        logger.debug('create ConsoleUserInterface')
-        return ConsoleUserInterface(**user_interface_config.model_dump())
-    else:
-        raise ValueError(f'Unsupported user interface type: {user_interface_type}')  # noqa
+from .ui import create_user_interface
 
 
 @click.command()
