@@ -5,6 +5,7 @@ from pydantic import BaseModel
 class ESentenceGeneratorType(Enum):
     OPENAI: str = 'OPENAI'
     HUGGINGFACE: str = 'HUGGINGFACE'
+    STATIC: str = 'STATIC'
 
 
 class EUserInterfaceType(Enum):
@@ -32,6 +33,11 @@ class HuggingfaceSentenceGeneratorConfigModel(BaseSentenceGeneratorConfigModel):
     device: str = 'cuda'
 
 
+class StaticSentenceGeneratorConfigModel(BaseSentenceGeneratorConfigModel):
+    text_kana_map: dict[str, str | None]
+    is_random: bool = False
+
+
 class BaseUserInterfaceConfigModel(BaseModel):
     pass
 
@@ -42,10 +48,10 @@ class ConsoleUserInterfaceConfigModel(BaseUserInterfaceConfigModel):
 
 class ConfigModel(BaseModel):
     sentence_generator_type: ESentenceGeneratorType = ESentenceGeneratorType.OPENAI  # noqa
-    sentence_generator_config: dict[str, str | float | int | None] = OpenAISentenceGeneratorConfigModel().model_dump()  # noqa
+    sentence_generator_config: dict[str, str | float | int | bool | None | dict | list] = OpenAISentenceGeneratorConfigModel().model_dump()  # noqa
 
     user_interface_type: EUserInterfaceType = EUserInterfaceType.CONSOLE
-    user_interface_config: dict[str, str | float | int | None] = ConsoleUserInterfaceConfigModel().model_dump()  # noqa
+    user_interface_config: dict[str, str | float | int | None | dict | list] = ConsoleUserInterfaceConfigModel().model_dump()  # noqa
 
     record_direc: str = './record'
 
@@ -53,6 +59,7 @@ class ConfigModel(BaseModel):
 SENTENCE_GENERATOR_TYPE_TO_CONFIG_MODEL: dict[ESentenceGeneratorType, BaseModel] = {  # noqa
     ESentenceGeneratorType.OPENAI: OpenAISentenceGeneratorConfigModel,  # type: ignore  # noqa
     ESentenceGeneratorType.HUGGINGFACE: HuggingfaceSentenceGeneratorConfigModel,  # type: ignore  # noqa
+    ESentenceGeneratorType.STATIC: StaticSentenceGeneratorConfigModel,  # type: ignore  # noqa
 }
 
 USER_INTERFACE_TYPE_TO_CONFIG_MODEL: dict[EUserInterfaceType, BaseModel] = {  # noqa
