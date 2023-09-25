@@ -5,6 +5,8 @@
 ![GitHub](https://img.shields.io/github/license/hmasdev/simple_typing_application)
 ![GitHub last commit](https://img.shields.io/github/last-commit/hmasdev/simple_typing_application)
 
+![application image](./pics/application.png)
+
 ## Requires
 
 - Python >= 3.8
@@ -45,10 +47,10 @@ $ pip install .[extra]
 You can specify the following optional dependencies:
 
 - `[huggingface]`
-- `[extras]`
+- `[extra]`
 - `[dev]`
 
-For more details, see `./setup.cfg`.
+For more details, see [`./setup.cfg`](./setup.cfg).
 
 ## Usage
 
@@ -58,10 +60,12 @@ You can specify some parameters with '.json'.
 
 For example, the following `.json` files are valid:
 
-- `./sample_config.json`
-- `./sample_config_huggingface.json`
+- [`./sample_config.json`](./sample_config.json)
+- [`./sample_config_huggingface.json`](./sample_config_huggingface.json)
+- [`./sample_config_static.json`](./sample_config_static.json)
 
 The content of `./sample_config.json` is as follows:
+
 ```json
 {
     "sentence_generator_type": "OPENAI",
@@ -74,6 +78,8 @@ The content of `./sample_config.json` is as follows:
     },
     "user_interface_type": "CONSOLE",
     "user_interface_config": {},
+    "key_monitor_type": "PYNPUT",
+    "key_monitor_config": {},
     "record_direc": "./record"
 }
 ```
@@ -85,8 +91,9 @@ In this case, you should add an environment variable `OPENAI_API_KEY` which cont
 
 You can specify the followings as `sentence_generator_type`:
 
-- `OPENAI`
-- `HUGGINGFACE`
+- `OPENAI`: Use OpenAI API to generate typing targets;
+- `HUGGINGFACE`: Use the model available in HuggingFace to generate typing targets;
+- `STATIC`: Use typing targets which you have specified.
 
 For each `sentence_generator_type`, you can specify the detailed parameters as `sentence_generator_config`:
 
@@ -105,16 +112,37 @@ For each `sentence_generator_type`, you can specify the detailed parameters as `
   - `top_p`: float between 0 and 1. See [huggingface.co/docs/transformers/pipeline_tutorial](#huggingface_pipeline_tutorial).
   - `device`: `cpu` or `cuda`
 
+- `STATIC`
+  - `text_kana_map`: key-value pairs whose keys are row typing targets and values are typing targets which do not include kanjis;
+  - `is_random`: whether typing targets are randomly selected or sequentially displayed.
+
+To see the default values, see [`./simple_typing_application/models/config_models/sentence_generator_config_model.py`](./simple_typing_application/models/config_models/sentence_generator_config_model.py).
+
 #### User Interface
 
 You can specify the followings as `user_interface_type`:
 
-- `CONSOLE`
+- `CONSOLE`: CUI
 
 For each `user_interface_type`, you can specify the detailed parameters as `user_interface_config`:
 
 - `CONSOLE`
   - No parameters
+
+To see the default values, see [`./simple_typing_application/models/config_models/user_interface_config_model.py`](./simple_typing_application/models/config_models/user_interface_config_model.py).
+
+#### Key Monitor
+
+You can specity the followings as `key_monitor_type`:
+
+- `PYNPUT`: `pynput`-based local key monitor
+
+For each `key_monitor_type`, you can specify the detailed parameters as `key_monitor_config`:
+
+- `PYNPUT`
+  - No parameters
+
+To see the default values, see [`./simple_typing_application/models/config_models/key_monitor_config_model.py`](./simple_typing_application/models/config_models/key_monitor_config_model.py).
 
 ### Launch the application
 
@@ -131,6 +159,18 @@ python -m simple_typing_application -c HERE_IS_YOUR_CONFIG_FILE --debug
 ```
 
 For more details, run `python -m simple_typing_application --help`.
+
+### Do typing
+
+`simple_typing_application` shows typing targets through the interface which you has specified.
+Type correct keys.
+Note that `Typing Target (Romaji)` displayed in your interface is one of correct typing patterns. For example, when `Typing Target (Hiragana)` is 'ち', both 'ti' and 'chi' are correct although only one of them is displayed.
+
+In addition to normal typing, the following keys can be accepted:
+
+- `Esc`: to quit the application;
+- `Ctrl+c`: to quit the application;
+- `Tab`: to skip the current typing target.
 
 ### Analyze Your Typing Performance
 
@@ -156,7 +196,7 @@ The application records your typing in the following format in the directory spe
 }
 ```
 
-Refer to `./sample_record.json` for example.
+Refer to [`./sample_record.json`](./sample_record.json) for example.
 
 ## Development
 
@@ -165,7 +205,7 @@ Refer to `./sample_record.json` for example.
 ```bash
 $ git clone https://github.com/hmasdev/simple_typing_application.git
 $ cd simple_typing_application
-$ pip install .[full]
+$ pip install .[huggingface,extra,dev]
 ```
 
 or 
