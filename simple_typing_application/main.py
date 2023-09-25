@@ -3,6 +3,7 @@ from logging import basicConfig, DEBUG, getLogger, INFO, Logger
 import click
 
 from .config import load_config
+from .key_monitor import create_key_monitor
 from .sentence_generator import create_sentence_generator
 from .typing_game import TypingGame
 from .ui import create_user_interface
@@ -23,11 +24,12 @@ def main(config_path: str, debug: bool):
     config = load_config(config_path)  # noqa
 
     # initialize
+    key_monitor = create_key_monitor(config.key_monitor_type, config.key_monitor_config)  # noqa
     sentence_generator = create_sentence_generator(config.sentence_generator_type, config.sentence_generator_config)  # noqa
     ui = create_user_interface(config.user_interface_type, config.user_interface_config)  # noqa
     record_direc = config.record_direc
 
-    game = TypingGame(sentence_generator, ui, record_direc)
+    game = TypingGame(sentence_generator, key_monitor, ui, record_direc)
     game.start()
 
 

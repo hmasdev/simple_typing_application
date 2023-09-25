@@ -1,15 +1,13 @@
 import asyncio
-from copy import deepcopy
 from datetime import datetime as dt
 import json
 from logging import getLogger, Logger
 import os
-import queue
 
-from pynput.keyboard import KeyCode, Key, Listener
 
-from .const import ASCII_CHARS
 from .const.color import EColor
+from .const.keys import EMetaKey
+from .key_monitor.base import BaseKeyMonitor
 from .models.output_model import OutputModel
 from .models.record_model import RecordModel
 from .models.typing_target_model import TypingTargetModel
@@ -17,7 +15,58 @@ from .sentence_generator.base import BaseSentenceGenerator
 from .ui.base import BaseUserInterface
 
 
-# TODO: add various keyboard input monitor.
+def _input_char_is_correct(
+    char: str,
+    typing_target: TypingTargetModel,
+) -> tuple[bool, TypingTargetModel]:
+    '''Check if the input character is correct.
+
+    Args:
+        char (str): an input character.
+        typing_target (TypingTargetModel): typing target.
+
+    Returns:
+        bool: True if the input character is correct.
+        TypingTargetModel: the next typing pattern.
+    '''
+    # check
+    new_typing_target = typing_target.model_copy(deep=True)
+    new_typing_target.typing_target[0] = [
+        pattern[1:]
+        for pattern in new_typing_target.typing_target[0]
+        if pattern.startswith(char)
+    ]
+
+    # return result
+    if len(new_typing_target.typing_target[0]) == 0:
+        return False, typing_target
+    else:
+        if "" in new_typing_target.typing_target[0]:
+            # NOTE: When '' in typing_target.typing_target[0], it means that a patten has been input correctly.  # noqa
+            # TODO: pop(0) is slow.
+            head = new_typing_target.typing_target.pop(0)
+            head.remove("")
+
+            if new_typing_target.typing_target:
+                new_typing_target.typing_target[0].extend(head)
+
+        return True, new_typing_target
+
+
+def _typing_is_done(typing_target: TypingTargetModel) -> bool:
+    '''Check if typing is done.
+
+    Args:
+        typing_target (TypingTargetModel): typing target.
+
+    Returns:
+        bool: True if typing is done.
+
+    NOTE:
+        Typing is done when typing_target.typing_target is empty.
+    '''  # noqa
+    return len(typing_target.typing_target) == 0
+
 
 class TypingGame:
 
@@ -30,14 +79,19 @@ class TypingGame:
     def __init__(
         self,
         sentence_generator: BaseSentenceGenerator,
+        key_monitor: BaseKeyMonitor,
         ui: BaseUserInterface,
         record_direc: str,
         logger: Logger = getLogger(__name__),
     ):
         self._sentence_generator = sentence_generator
+        self._key_monitor = key_monitor
         self._ui = ui
         self._record_direc = record_direc
         self._logger = logger
+
+        self.__current_typing_target: TypingTargetModel | None = None
+        self.__current_records: list[RecordModel] | None = None
 
         os.makedirs(self._record_direc, exist_ok=True)
 
@@ -80,128 +134,112 @@ class TypingGame:
 
     async def _typing_step(self, typing_target: TypingTargetModel):
 
-        # preparation
+        # initialize
+        self.__initialize_typing_step(typing_target.model_copy(deep=True))
+        assert self.__current_typing_target is not None
+        assert self.__current_records is not None
         output = OutputModel(
             timestamp=dt.now(),
             typing_target=typing_target.model_copy(deep=True),
-            records=[],
+            records=self.__current_records,
         )
-        record_queue: queue.Queue = queue.Queue()  # NOTE: it may be redundant.
-
-        # define callbacks
-        def on_press_callback(key: KeyCode | Key | None):
-            nonlocal typing_target
-            nonlocal record_queue
-
-            # preparation
-            timestamp = dt.now()
-            correct_keys = list(set([x[0] for x in typing_target.typing_target[0] if len(x) > 0]))  # noqa
-            pressed_key: str | None = None
-            correct: bool = False
-            # self._logger.debug(f'correct keys: {correct_keys}')
-
-            # chcek key
-            if key == Key.esc:
-                _exit()
-
-            elif key == Key.tab:
-                _skip()
-
-            elif key == Key.space:
-                correct, typing_target.typing_target = self._is_correct(' ', typing_target.typing_target)    # type: ignore  # noqa
-                pressed_key = ' '
-                self._ui.show_user_input(' ')
-
-            elif isinstance(key, KeyCode) and key in map(KeyCode.from_char, ASCII_CHARS + "¥"):  # noqa
-                if key.char is None:
-                    raise Exception('key.char is None.')
-                correct, typing_target.typing_target = self._is_correct(key.char, typing_target.typing_target)  # noqa
-                pressed_key = key.char
-                self._ui.show_user_input(key.char, color=EColor.GREEN if correct else EColor.RED)  # noqa
-
-            # record
-            if pressed_key is not None:
-                record_queue.put(RecordModel(
-                    timestamp=timestamp,
-                    pressed_key=pressed_key,
-                    is_correct=correct,
-                    correct_keys=correct_keys,
-                ))
-
-            # when done
-            if self._is_done(typing_target.typing_target):
-                _done()
-
-            # update typing target
-            if len(typing_target.typing_target) > 1 and "" in typing_target.typing_target[0]:  # noqa
-                # TODO: pop(0) is slow.
-                head = typing_target.typing_target.pop(0)
-                head.remove("")
-                typing_target.typing_target[0].extend(head)
-
-        def on_release_callback(key: KeyCode | Key | None):
-            pass
-
-        def _done():
-            nonlocal listener  # type: ignore
-            self._ui.system_anounce('DONE!', color=self._system_anounce_color)
-            listener.stop()
-            del listener
-
-        def _skip():
-            nonlocal listener  # type: ignore
-            self._ui.system_anounce('SKIP!', color=self._system_anounce_color)
-            listener.stop()
-            del listener
-
-        def _exit():
-            nonlocal listener  # type: ignore
-            listener.stop()
-            exit(0)
-
-        # initialize
         output_path = os.path.join(self._record_direc, f'{dt.now().strftime("%Y%m%d_%H%M%S")}.json')  # noqa
-        listener = Listener(on_press=on_press_callback, on_release=on_release_callback)  # noqa
 
         # start
-        listener.start()
-        listener.join()
-        output.records = sorted(list(record_queue.queue), key=lambda x: x.timestamp)  # noqa
+        self._key_monitor.start()
+
+        # wait for done
+        # post process
+        output.records = sorted(list(self.__current_records), key=lambda x: x.timestamp)  # noqa
+        self._logger.debug(f'The following data has been saved to {output_path}: {output.model_dump(mode="json")}')  # noqa
         json.dump(output.model_dump(mode='json'), open(output_path, 'a', encoding='utf-8'), indent=4, ensure_ascii=False)  # noqa
+
+        # clean up
+        self.__clean_up_typing_step()
+
         return
 
-    @staticmethod
-    def _is_correct(
-        char: str,
-        typing_target: list[list[str]],
-    ) -> tuple[bool, list[list[str]]]:
-        '''Check if the input character is correct.
+    def __initialize_typing_step(self, typing_target: TypingTargetModel):
+        self.__current_typing_target = typing_target
+        self.__current_records = []
+        self._key_monitor.set_on_press_callback(self.__on_press_callback)
+        self._key_monitor.set_on_release_callback(self.__on_release_callback)
 
-        Args:
-            char (str): an input character.
-            typing_target (list[list[str]]): typing target.
+    def __clean_up_typing_step(self):
+        self.__current_typing_target = None
+        self.__current_records = None
+        self._key_monitor.set_on_press_callback(None)
+        self._key_monitor.set_on_release_callback(None)
 
-        Returns:
-            bool: True if the input character is correct.
-            list[list[str]]: the next typing pattern.
-        '''
-        # check
-        new_typing_target = deepcopy(typing_target)
-        new_typing_target[0] = [
-            pattern[1:]
-            for pattern in new_typing_target[0]
-            if pattern.startswith(char)
-        ]
+    def __skip_typing_step(self):
+        self._ui.system_anounce('SKIP!', color=self._system_anounce_color)
+        self._key_monitor.stop()
 
-        # return result
-        if len(new_typing_target[0]) == 0:
-            return False, typing_target
-        else:
-            return True, new_typing_target
+    def __done_typing_step(self):
+        self._ui.system_anounce('DONE!', color=self._system_anounce_color)
+        self._key_monitor.stop()
 
-    @staticmethod
-    def _is_done(typing_target: list[list[str]]) -> bool:
-        return (
-            len(typing_target) == 0
-            or (len(typing_target) == 1 and "" in typing_target[0])
+    def __exit_typing_step(self):
+        self._ui.system_anounce('EXIT!', color=self._system_anounce_color)
+        self._key_monitor.stop()
+        exit(-1)
+
+    def __on_press_callback(
+        self,
+        key: EMetaKey | str | None,
+    ) -> bool | None:
+        # validation
+        assert self.__current_typing_target is not None
+        assert self.__current_records is not None
+
+        # preparation
+        record = RecordModel(
+            timestamp=dt.now(),
+            pressed_key='',
+            is_correct=False,
+            correct_keys=list(set([x[0] for x in self.__current_typing_target.typing_target[0] if len(x) > 0])),  # noqa
         )
+        self._logger.debug(f'current typing target: {self.__current_typing_target}')  # noqa
+        self._logger.debug(f'correct keys: {record.correct_keys}')
+
+        # chcek key
+        if key == EMetaKey.ESC:
+            self._logger.debug('Escape key has been pressed.')
+        elif key == EMetaKey.TAB:
+            self._logger.debug('Tab key has been pressed.')
+        elif isinstance(key, str):
+            self._logger.debug(f'{key} key has been pressed.')
+            record.pressed_key = key
+            record.is_correct, self.__current_typing_target = _input_char_is_correct(key, self.__current_typing_target)  # noqa
+            self._ui.show_user_input(key, color=EColor.GREEN if record.is_correct else EColor.RED)  # noqa
+        else:
+            self._logger.warning(f'key is None.')
+
+        # record
+        if record.pressed_key != '':
+            self.__current_records.append(record)
+
+        return None
+
+    def __on_release_callback(self, key: EMetaKey | str | None) -> bool | None:
+        self._logger.debug(f'{key} key has been released.')
+
+        # validation
+        assert self.__current_typing_target is not None
+        assert self.__current_records is not None
+
+        # meta key
+        if key == EMetaKey.ESC:
+            self.__exit_typing_step()
+            return False
+        elif key == EMetaKey.TAB:
+            self.__skip_typing_step()
+            return False
+
+        # check if typing is done
+        if _typing_is_done(self.__current_typing_target):
+            self._logger.debug('Typing is done.')
+            self.__done_typing_step()
+            return False
+
+        return None
