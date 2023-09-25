@@ -1,8 +1,7 @@
 import pytest
 
 from simple_typing_application.const.user_interface import EUserInterfaceType
-from simple_typing_application.models.config_models.user_interface_config_model import (
-    BaseUserInterfaceConfigModel,
+from simple_typing_application.models.config_models.user_interface_config_model import (  # noqa
     ConsoleUserInterfaceConfigModel,
 )
 from simple_typing_application.ui.cui import ConsoleUserInterface

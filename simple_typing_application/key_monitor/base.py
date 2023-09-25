@@ -16,7 +16,7 @@ class BaseKeyMonitor(ABC):
             callback (Callable[[EMetaKey | str | None], bool | None] | None):
                 callback function for key press event.
                 If the callback function returns False, the key monitor will stop.
-        '''
+        '''  # noqa
         self._on_press_callback = callback
 
     def set_on_release_callback(
@@ -29,7 +29,7 @@ class BaseKeyMonitor(ABC):
             callback (Callable[[EMetaKey | str | None], bool | None] | None):
                 callback function for key release event.
                 If the callback function returns False, the key monitor will stop.
-        '''
+        '''  # noqa
         self._on_release_callback = callback
 
     @abstractmethod

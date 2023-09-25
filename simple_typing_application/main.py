@@ -11,7 +11,7 @@ from .ui import create_user_interface
 
 @click.command()
 @click.option('--config-path', '-c', default='./config.json', help='path to config file. Defaults to ./config.json')  # noqa
-@click.option('--log-level', '-l', default='INFO', help='log level. Defaults to INFO.')
+@click.option('--log-level', '-l', default='INFO', help='log level. Defaults to INFO.')  # noqa
 @click.option('--debug', '-d', is_flag=True, help='debug mode.')
 def main(
     config_path: str,

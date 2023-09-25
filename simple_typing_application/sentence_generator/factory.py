@@ -28,7 +28,7 @@ def create_sentence_generator(
         }[sentence_generator_type]
         sentence_generator_config_model = {
             ESentenceGeneratorType.OPENAI: OpenAISentenceGeneratorConfigModel,
-            ESentenceGeneratorType.HUGGINGFACE: HuggingfaceSentenceGeneratorConfigModel,
+            ESentenceGeneratorType.HUGGINGFACE: HuggingfaceSentenceGeneratorConfigModel,  # noqa
             ESentenceGeneratorType.STATIC: StaticSentenceGeneratorConfigModel,
         }[sentence_generator_type]
     except KeyError:

@@ -8,7 +8,7 @@ from simple_typing_application.models.output_model import OutputModel
 from simple_typing_application.models.record_model import RecordModel
 from simple_typing_application.models.typing_target_model import TypingTargetModel  # noqa
 from simple_typing_application.key_monitor.base import BaseKeyMonitor
-from simple_typing_application.sentence_generator.base import BaseSentenceGenerator
+from simple_typing_application.sentence_generator.base import BaseSentenceGenerator  # noqa
 from simple_typing_application.typing_game import (
     _input_char_is_correct,
     _typing_is_done,
@@ -260,7 +260,7 @@ def test_typing_game___initialize_typing_step(typing_game_with_mocks: tuple[Typi
     typing_game._TypingGame__initialize_typing_step(typing_target)  # type: ignore  # noqa
 
     # assert
-    assert typing_game._TypingGame__current_typing_target is typing_target  # type: ignore
+    assert typing_game._TypingGame__current_typing_target is typing_target  # type: ignore  # noqa
     assert typing_game._TypingGame__current_records == []  # type: ignore
     typing_game._key_monitor.set_on_press_callback.assert_called_once_with(typing_game._TypingGame__on_press_callback)  # type: ignore # noqa
     typing_game._key_monitor.set_on_release_callback.assert_called_once_with(typing_game._TypingGame__on_release_callback)  # type: ignore # noqa

@@ -213,7 +213,7 @@ class TypingGame:
             record.is_correct, self.__current_typing_target = _input_char_is_correct(key, self.__current_typing_target)  # noqa
             self._ui.show_user_input(key, color=EColor.GREEN if record.is_correct else EColor.RED)  # noqa
         else:
-            self._logger.warning(f'key is None.')
+            self._logger.debug('key is invalid.')
 
         # record
         if record.pressed_key != '':
