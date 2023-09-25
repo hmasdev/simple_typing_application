@@ -1,8 +1,10 @@
 import os
 import pytest
-from simple_typing_application.models.config_model import (
-    ConfigModel,
+from simple_typing_application.models.config_models import ConfigModel
+from simple_typing_application.models.config_models.sentence_generator_config_model import (  # noqa
     OpenAISentenceGeneratorConfigModel,
+)
+from simple_typing_application.models.config_models.user_interface_config_model import (  # noqa
     ConsoleUserInterfaceConfigModel,
 )
 from simple_typing_application.config import load_config
@@ -30,11 +32,7 @@ def test_load_config_json(mocker):
 
     # preparation
     path = 'dummy.json'
-    expected = (
-        ConfigModel(**mock_json_load.return_value),
-        OpenAISentenceGeneratorConfigModel(**mock_json_load.return_value['sentence_generator_config']),  # noqa
-        ConsoleUserInterfaceConfigModel(**mock_json_load.return_value['user_interface_config']),  # noqa
-    )
+    expected = ConfigModel(**mock_json_load.return_value)
 
     # run
     actual = load_config(path)
@@ -50,11 +48,7 @@ def test_load_config_json_not_found(mocker):
 
     # preparation
     path = 'does_not_exist.json'
-    expected = (
-        ConfigModel(),
-        OpenAISentenceGeneratorConfigModel(),
-        ConsoleUserInterfaceConfigModel(),
-    )
+    expected = ConfigModel()
 
     # run
     assert not os.path.exists(path)

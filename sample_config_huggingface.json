@@ -10,5 +10,7 @@
     },
     "user_interface_type": "CONSOLE",
     "user_interface_config": {},
+    "key_monitor_type": "PYNPUT",
+    "key_monitor_config": {},
     "record_direc": "./record"
 }

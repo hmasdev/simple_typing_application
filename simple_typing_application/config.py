@@ -1,19 +1,13 @@
 import json
 from logging import getLogger, Logger
 import os
-from .models.config_model import (
-    ConfigModel,
-    BaseSentenceGeneratorConfigModel,
-    BaseUserInterfaceConfigModel,
-    SENTENCE_GENERATOR_TYPE_TO_CONFIG_MODEL,
-    USER_INTERFACE_TYPE_TO_CONFIG_MODEL
-)
+from .models.config_models import ConfigModel
 
 
 def load_config(
     path: str,
     logger: Logger = getLogger(__name__),
-) -> tuple[ConfigModel, BaseSentenceGeneratorConfigModel, BaseUserInterfaceConfigModel]:  # noqa
+) -> ConfigModel:  # noqa
     '''Load config file.
 
     Args:
@@ -25,8 +19,6 @@ def load_config(
 
     Returns:
         ConfigModel: config model.
-        BaseSentenceGeneratorConfigModel: sentence generator config model.
-        BaseUserInterfaceConfigModel: user interface config model.
     '''  # noqa
     logger.debug(f'load config from {path}')
 
@@ -38,8 +30,6 @@ def load_config(
         except FileNotFoundError:
             logger.warning(f'config file not found: {path}. So use default config.')  # noqa
             config = ConfigModel()
-        sentence_generator_config = SENTENCE_GENERATOR_TYPE_TO_CONFIG_MODEL[config.sentence_generator_type](**config.sentence_generator_config)  # type: ignore  # noqa
-        user_interface_config = USER_INTERFACE_TYPE_TO_CONFIG_MODEL[config.user_interface_type](**config.user_interface_config)  # type: ignore  # noqa
     elif os.path.splitext(path)[1] in ['.yaml', '.yml']:
         logger.debug('load yaml config')
         raise NotImplementedError('yaml is not supported yet.')
@@ -47,7 +37,4 @@ def load_config(
         raise ValueError(f'Unsupported file type: {os.path.splitext(path)[1]}')
 
     logger.debug(f'config: {config}')
-    logger.debug(f'sentence_generator_config: {sentence_generator_config}')
-    logger.debug(f'user_interface_config: {user_interface_config}')
-
-    return config, sentence_generator_config, user_interface_config
+    return config

@@ -1,73 +1,52 @@
-from logging import basicConfig, DEBUG, getLogger, INFO, Logger
+import logging
 
 import click
 
 from .config import load_config
-from .models.config_model import (
-    ESentenceGeneratorType,
-    EUserInterfaceType,
-    BaseSentenceGeneratorConfigModel,
-    BaseUserInterfaceConfigModel
-)
-from .sentence_generator.base import BaseSentenceGenerator
-from .sentence_generator.huggingface_sentence_generator import HuggingfaceSentenceGenerator  # noqa
-from .sentence_generator.openai_sentence_generator import OpenaiSentenceGenerator  # noqa
-from .sentence_generator.static_sentence_generator import StaticSentenceGenerator  # noqa
+from .key_monitor import create_key_monitor
+from .sentence_generator import create_sentence_generator
 from .typing_game import TypingGame
-from .ui.base import BaseUserInterface
-from .ui.cui import ConsoleUserInterface
-
-
-def create_sentence_generator(
-    sentence_generator_type: ESentenceGeneratorType,
-    sentence_generator_config: BaseSentenceGeneratorConfigModel,
-    logger: Logger = getLogger(__name__),
-) -> BaseSentenceGenerator:
-    if sentence_generator_type == ESentenceGeneratorType.OPENAI:
-        logger.debug('create OpenaiSentenceGenerator')
-        return OpenaiSentenceGenerator(**sentence_generator_config.model_dump())  # noqa
-    elif sentence_generator_type == ESentenceGeneratorType.HUGGINGFACE:
-        logger.debug('create HuggingfaceSentenceGenerator')
-        return HuggingfaceSentenceGenerator(**sentence_generator_config.model_dump())  # noqa
-    elif sentence_generator_type == ESentenceGeneratorType.STATIC:
-        logger.debug('create StaticSentenceGenerator')
-        return StaticSentenceGenerator(**sentence_generator_config.model_dump())  # noqa
-    else:
-        raise ValueError(f'Unsupported sentence generator type: {sentence_generator_type}')  # noqa
-
-
-def create_user_interface(
-    user_interface_type: EUserInterfaceType,
-    user_interface_config: BaseUserInterfaceConfigModel,
-    logger: Logger = getLogger(__name__),
-) -> BaseUserInterface:
-    if user_interface_type == EUserInterfaceType.CONSOLE:
-        logger.debug('create ConsoleUserInterface')
-        return ConsoleUserInterface(**user_interface_config.model_dump())
-    else:
-        raise ValueError(f'Unsupported user interface type: {user_interface_type}')  # noqa
+from .ui import create_user_interface
 
 
 @click.command()
 @click.option('--config-path', '-c', default='./config.json', help='path to config file. Defaults to ./config.json')  # noqa
+@click.option('--log-level', '-l', default='INFO', help='log level. Defaults to INFO.')  # noqa
 @click.option('--debug', '-d', is_flag=True, help='debug mode.')
-def main(config_path: str, debug: bool):
+def main(
+    config_path: str,
+    log_level: str,
+    debug: bool,
+    logger: logging.Logger = logging.getLogger(__name__),
+):
 
     # set log level
     if debug:
-        basicConfig(level=DEBUG)
+        logging.basicConfig(level=logging.DEBUG)
+    elif log_level == 'DEBUG':
+        logging.basicConfig(level=logging.DEBUG)
+    elif log_level == 'INFO':
+        logging.basicConfig(level=logging.INFO)
+    elif log_level == 'WARNING':
+        logging.basicConfig(level=logging.WARNING)
+    elif log_level == 'ERROR':
+        logging.basicConfig(level=logging.ERROR)
+    elif log_level == 'CRITICAL':
+        logging.basicConfig(level=logging.CRITICAL)
     else:
-        basicConfig(level=INFO)
+        logging.basicConfig(level=logging.INFO)
+        logger.warning(f'invalid log level: {log_level}. Set to INFO')
 
     # load config
-    config, sentence_generator_config, user_interface_config = load_config(config_path)  # noqa
+    config = load_config(config_path)  # noqa
 
     # initialize
-    sentence_generator = create_sentence_generator(config.sentence_generator_type, sentence_generator_config)  # noqa
-    ui = create_user_interface(config.user_interface_type, user_interface_config)  # noqa
+    key_monitor = create_key_monitor(config.key_monitor_type, config.key_monitor_config)  # noqa
+    sentence_generator = create_sentence_generator(config.sentence_generator_type, config.sentence_generator_config)  # noqa
+    ui = create_user_interface(config.user_interface_type, config.user_interface_config)  # noqa
     record_direc = config.record_direc
 
-    game = TypingGame(sentence_generator, ui, record_direc)
+    game = TypingGame(sentence_generator, key_monitor, ui, record_direc)
     game.start()
 
 
