@@ -1,7 +1,14 @@
+import logging
 from logging import getLogger, Logger
 
 from .base import BaseSentenceGenerator  # noqa
-from .huggingface_sentence_generator import HuggingfaceSentenceGenerator  # noqa
+try:
+    from .huggingface_sentence_generator import HuggingfaceSentenceGenerator  # noqa
+except ImportError:
+    logging.warning(
+        'Failed to import HuggingfaceSentenceGenerator. '
+        'If you want to use HuggingfaceSentenceGenerator, `pip install simple_typing_application[huggingface]`.'  # noqa
+    )
 from .openai_sentence_generator import OpenaiSentenceGenerator  # noqa
 from .static_sentence_generator import StaticSentenceGenerator  # noqa
 from ..const.sentence_generator import ESentenceGeneratorType  # noqa
@@ -13,6 +20,18 @@ from ..models.config_models.sentence_generator_config_model import (  # noqa
 )
 
 
+def _select_class_and_config_model(sentence_generator_type: ESentenceGeneratorType) -> tuple[type, type]:  # noqa
+
+    if sentence_generator_type == ESentenceGeneratorType.OPENAI:
+        return OpenaiSentenceGenerator, OpenAISentenceGeneratorConfigModel
+    elif sentence_generator_type == ESentenceGeneratorType.HUGGINGFACE:
+        return HuggingfaceSentenceGenerator, HuggingfaceSentenceGeneratorConfigModel  # noqa
+    elif sentence_generator_type == ESentenceGeneratorType.STATIC:
+        return StaticSentenceGenerator, StaticSentenceGeneratorConfigModel
+    else:
+        raise ValueError(f'Unsupported sentence generator type: {sentence_generator_type}')  # noqa
+
+
 def create_sentence_generator(
     sentence_generator_type: ESentenceGeneratorType,
     dict_config: dict[str, str | float | int | bool | None | dict | list],
@@ -21,18 +40,9 @@ def create_sentence_generator(
 
     # select sentence generator class and config model
     try:
-        sentence_generator_cls = {
-            ESentenceGeneratorType.OPENAI: OpenaiSentenceGenerator,
-            ESentenceGeneratorType.HUGGINGFACE: HuggingfaceSentenceGenerator,
-            ESentenceGeneratorType.STATIC: StaticSentenceGenerator,
-        }[sentence_generator_type]
-        sentence_generator_config_model = {
-            ESentenceGeneratorType.OPENAI: OpenAISentenceGeneratorConfigModel,
-            ESentenceGeneratorType.HUGGINGFACE: HuggingfaceSentenceGeneratorConfigModel,  # noqa
-            ESentenceGeneratorType.STATIC: StaticSentenceGeneratorConfigModel,
-        }[sentence_generator_type]
-    except KeyError:
-        raise ValueError(f'Unsupported sentence generator type: {sentence_generator_type}')  # noqa
+        sentence_generator_cls, sentence_generator_config_model = _select_class_and_config_model(sentence_generator_type)  # noqa
+    except NameError:
+        raise ImportError(f'Failed to import sentence generator class and config model for sentence_generator_type={sentence_generator_type}')  # noqa
 
     # create sentence generator
     logger.debug(f'create {sentence_generator_cls.__name__}')

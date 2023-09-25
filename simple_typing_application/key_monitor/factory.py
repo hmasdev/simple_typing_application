@@ -10,6 +10,14 @@ from ..models.config_models.key_monitor_config_model import (
 )
 
 
+def _select_class_and_config_model(key_monitor_type: EKeyMonitorType) -> tuple[type, type]:  # noqa
+
+    if key_monitor_type == EKeyMonitorType.PYNPUT:
+        return PynputBasedKeyMonitor, PynputBasedKeyMonitorConfigModel
+    else:
+        raise ValueError(f'Unsupported key monitor type: {key_monitor_type}')
+
+
 def create_key_monitor(
     key_monitor_type: EKeyMonitorType,
     dict_config: dict[str, str | float | int | bool | None | dict | list],
@@ -18,14 +26,9 @@ def create_key_monitor(
 
     # select key monitor class and config model
     try:
-        key_monitor_cls = {
-            EKeyMonitorType.PYNPUT: PynputBasedKeyMonitor,
-        }[key_monitor_type]
-        key_monitor_config_model = {
-            EKeyMonitorType.PYNPUT: PynputBasedKeyMonitorConfigModel,
-        }[key_monitor_type]
-    except KeyError:
-        raise ValueError(f'Unsupported key monitor type: {key_monitor_type}')
+        key_monitor_cls, key_monitor_config_model = _select_class_and_config_model(key_monitor_type)  # noqa
+    except NameError:
+        raise ImportError(f'Failed to import key monitor class and config model for key_monitor_type={key_monitor_type}')  # noqa
 
     # create key monitor
     logger.debug(f'create {key_monitor_cls.__name__}')
