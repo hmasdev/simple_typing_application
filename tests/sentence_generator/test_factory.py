@@ -2,15 +2,57 @@ import pytest
 
 from simple_typing_application.const.sentence_generator import ESentenceGeneratorType  # noqa
 from simple_typing_application.models.config_models.sentence_generator_config_model import (  # noqa
-    BaseSentenceGeneratorConfigModel,
     OpenAISentenceGeneratorConfigModel,
     HuggingfaceSentenceGeneratorConfigModel,
     StaticSentenceGeneratorConfigModel,
 )
-from simple_typing_application.sentence_generator.factory import create_sentence_generator  # noqa
+from simple_typing_application.sentence_generator.factory import (
+    create_sentence_generator,
+    _select_class_and_config_model,
+)
 from simple_typing_application.sentence_generator.huggingface_sentence_generator import HuggingfaceSentenceGenerator  # noqa
 from simple_typing_application.sentence_generator.openai_sentence_generator import OpenaiSentenceGenerator  # noqa
 from simple_typing_application.sentence_generator.static_sentence_generator import StaticSentenceGenerator  # noqa
+
+
+@pytest.mark.parametrize(
+    "sentence_generator_type, expected_class, expected_config_model",
+    [
+        (
+            ESentenceGeneratorType.OPENAI,
+            OpenaiSentenceGenerator,
+            OpenAISentenceGeneratorConfigModel,
+        ),
+        (
+            ESentenceGeneratorType.HUGGINGFACE,
+            HuggingfaceSentenceGenerator,
+            HuggingfaceSentenceGeneratorConfigModel,
+        ),
+        (
+            ESentenceGeneratorType.STATIC,
+            StaticSentenceGenerator,
+            StaticSentenceGeneratorConfigModel,
+        ),
+    ]
+)
+def test_select_class_and_config_model(
+    sentence_generator_type: ESentenceGeneratorType,
+    expected_class: type,
+    expected_config_model: type,
+):
+
+    # execute
+    sentence_generator_cls, sentence_generator_config_model = _select_class_and_config_model(sentence_generator_type)  # noqa
+
+    # assert
+    assert sentence_generator_cls is expected_class
+    assert sentence_generator_config_model is expected_config_model
+
+
+def test_select_class_and_config_model_raise_value_error():
+    # execute
+    with pytest.raises(ValueError):
+        _select_class_and_config_model('invalid_key_monitor_type')  # type: ignore  # noqa
 
 
 @pytest.mark.parametrize(
@@ -75,3 +117,35 @@ def test_create_sentence_generator(
 
     # assert
     assert isinstance(sentence_generator, expected_class)
+
+
+def test_create_sentence_generator_raise_import_error(mocker):
+
+    # mock
+    mocker.patch(
+        'simple_typing_application.sentence_generator.factory._select_class_and_config_model',  # noqa
+        side_effect=NameError,
+    )
+
+    # execute
+    with pytest.raises(ImportError):
+        create_sentence_generator(
+            ESentenceGeneratorType.HUGGINGFACE,
+            {},
+        )
+
+
+def test_create_sentence_generator_raise_value_error(mocker):
+
+    # mock
+    mocker.patch(
+        'simple_typing_application.sentence_generator.factory._select_class_and_config_model',  # noqa
+        side_effect=ValueError,
+    )
+
+    # execute
+    with pytest.raises(ValueError):
+        create_sentence_generator(
+            'invalid_sentence_generator_type',  # type: ignore
+            {},
+        )

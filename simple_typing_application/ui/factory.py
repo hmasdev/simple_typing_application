@@ -9,6 +9,14 @@ from ..models.config_models.user_interface_config_model import (  # noqa
 )
 
 
+def _select_class_and_config_model(user_interface_type: EUserInterfaceType) -> tuple[type, type]:  # noqa
+
+    if user_interface_type == EUserInterfaceType.CONSOLE:
+        return ConsoleUserInterface, ConsoleUserInterfaceConfigModel
+    else:
+        raise ValueError(f'Unsupported user interface type: {user_interface_type}')  # noqa
+
+
 def create_user_interface(
     user_interface_type: EUserInterfaceType,
     dict_config: dict[str, str | float | int | bool | None | dict | list],
@@ -17,15 +25,9 @@ def create_user_interface(
 
     # select user interface class and config model
     try:
-        user_interface_cls = {
-            EUserInterfaceType.CONSOLE: ConsoleUserInterface,
-        }[user_interface_type]
-        user_interface_config_model = {
-            EUserInterfaceType.CONSOLE: ConsoleUserInterfaceConfigModel,
-        }[user_interface_type]
-    except KeyError:
-        raise ValueError(
-            f'Unsupported user interface type: {user_interface_type}')
+        user_interface_cls, user_interface_config_model = _select_class_and_config_model(user_interface_type)  # noqa
+    except NameError:
+        raise ImportError(f'Failed to import user interface class and config model for user_interface_type={user_interface_type}')  # noqa
 
     # create user interface
     logger.debug(f'create {user_interface_cls.__name__}')
