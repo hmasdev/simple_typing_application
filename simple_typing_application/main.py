@@ -1,4 +1,4 @@
-from logging import basicConfig, DEBUG, getLogger, INFO, Logger
+import logging
 
 import click
 
@@ -11,14 +11,31 @@ from .ui import create_user_interface
 
 @click.command()
 @click.option('--config-path', '-c', default='./config.json', help='path to config file. Defaults to ./config.json')  # noqa
+@click.option('--log-level', '-l', default='INFO', help='log level. Defaults to INFO.')
 @click.option('--debug', '-d', is_flag=True, help='debug mode.')
-def main(config_path: str, debug: bool):
+def main(
+    config_path: str,
+    log_level: str,
+    debug: bool,
+    logger: logging.Logger = logging.getLogger(__name__),
+):
 
     # set log level
     if debug:
-        basicConfig(level=DEBUG)
+        logging.basicConfig(level=logging.DEBUG)
+    elif log_level == 'DEBUG':
+        logging.basicConfig(level=logging.DEBUG)
+    elif log_level == 'INFO':
+        logging.basicConfig(level=logging.INFO)
+    elif log_level == 'WARNING':
+        logging.basicConfig(level=logging.WARNING)
+    elif log_level == 'ERROR':
+        logging.basicConfig(level=logging.ERROR)
+    elif log_level == 'CRITICAL':
+        logging.basicConfig(level=logging.CRITICAL)
     else:
-        basicConfig(level=INFO)
+        logging.basicConfig(level=logging.INFO)
+        logger.warning(f'invalid log level: {log_level}. Set to INFO')
 
     # load config
     config = load_config(config_path)  # noqa
