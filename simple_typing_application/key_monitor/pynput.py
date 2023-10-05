@@ -66,7 +66,7 @@ class PynputBasedKeyMonitor(BaseKeyMonitor):
             self._logger.warning(f'{self.__class__.__name__}._on_press_callback is None.')  # noqa
             return
 
-        self._on_press_callback(cleaned_key)
+        return self._on_press_callback(cleaned_key)
 
     def _on_release_callback_wrapper(
         self,
@@ -79,4 +79,4 @@ class PynputBasedKeyMonitor(BaseKeyMonitor):
             self._logger.warning(f'{self.__class__.__name__}._on_release_callback is None.')  # noqa
             return
 
-        self._on_release_callback(cleaned_key)
+        return self._on_release_callback(cleaned_key)

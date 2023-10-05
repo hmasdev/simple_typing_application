@@ -7,3 +7,7 @@ class BaseKeyMonitorConfigModel(BaseModel):
 
 class PynputBasedKeyMonitorConfigModel(BaseKeyMonitorConfigModel):
     pass
+
+
+class SSHKeyboardBasedKeyMonitorConfigModel(BaseKeyMonitorConfigModel):
+    pass

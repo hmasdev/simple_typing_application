@@ -4,6 +4,7 @@ openai
 pydantic
 pynput
 requests
+sshkeyboard
 types-pynput
 types-requests
 --extra-index-url https://download.pytorch.org/whl/cu117
