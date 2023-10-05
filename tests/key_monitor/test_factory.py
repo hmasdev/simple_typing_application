@@ -2,8 +2,10 @@ import pytest
 
 from simple_typing_application.const.key_monitor import EKeyMonitorType  # noqa
 from simple_typing_application.models.config_models.key_monitor_config_model import (  # noqa
+    SSHKeyboardBasedKeyMonitorConfigModel,
     PynputBasedKeyMonitorConfigModel,
 )
+from simple_typing_application.key_monitor.sshkeyboard import SSHKeyboardBasedKeyMonitor  # noqa
 from simple_typing_application.key_monitor.factory import (
     create_key_monitor,
     _select_class_and_config_model
@@ -15,6 +17,7 @@ from simple_typing_application.key_monitor.pynput import PynputBasedKeyMonitor  
     "key_monitor_type, expected_class, expected_config_model",
     [
         (EKeyMonitorType.PYNPUT, PynputBasedKeyMonitor, PynputBasedKeyMonitorConfigModel),  # noqa
+        (EKeyMonitorType.SSHKEYBOARD, SSHKeyboardBasedKeyMonitor, SSHKeyboardBasedKeyMonitorConfigModel),  # noqa
     ]
 )
 def test_select_class_and_config_model(
@@ -49,7 +52,8 @@ def test_select_class_and_config_model_raise_value_error():
             EKeyMonitorType.PYNPUT,
             {},
             PynputBasedKeyMonitor,
-        )
+        ),
+        (EKeyMonitorType.SSHKEYBOARD, SSHKeyboardBasedKeyMonitorConfigModel().model_dump(), SSHKeyboardBasedKeyMonitor),  # noqa
     ]
 )
 def test_create_key_monitor(

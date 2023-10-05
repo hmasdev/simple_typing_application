@@ -136,10 +136,13 @@ To see the default values, see [`./simple_typing_application/models/config_model
 You can specity the followings as `key_monitor_type`:
 
 - `PYNPUT`: `pynput`-based local key monitor
+- `SSHKEYBOARD`: `sshkeyboard`-based key monitor
 
 For each `key_monitor_type`, you can specify the detailed parameters as `key_monitor_config`:
 
 - `PYNPUT`
+  - No parameters
+- `SSHKEYBOARD`
   - No parameters
 
 To see the default values, see [`./simple_typing_application/models/config_models/key_monitor_config_model.py`](./simple_typing_application/models/config_models/key_monitor_config_model.py).

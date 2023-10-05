@@ -3,8 +3,10 @@ from logging import getLogger, Logger
 
 from .base import BaseKeyMonitor
 from .pynput import PynputBasedKeyMonitor
+from .sshkeyboard import SSHKeyboardBasedKeyMonitor
 from ..const.key_monitor import EKeyMonitorType
 from ..models.config_models.key_monitor_config_model import (
+    SSHKeyboardBasedKeyMonitorConfigModel,
     BaseKeyMonitorConfigModel,
     PynputBasedKeyMonitorConfigModel,
 )
@@ -14,6 +16,8 @@ def _select_class_and_config_model(key_monitor_type: EKeyMonitorType) -> tuple[t
 
     if key_monitor_type == EKeyMonitorType.PYNPUT:
         return PynputBasedKeyMonitor, PynputBasedKeyMonitorConfigModel
+    elif key_monitor_type == EKeyMonitorType.SSHKEYBOARD:
+        return SSHKeyboardBasedKeyMonitor, SSHKeyboardBasedKeyMonitorConfigModel  # noqa
     else:
         raise ValueError(f'Unsupported key monitor type: {key_monitor_type}')
 

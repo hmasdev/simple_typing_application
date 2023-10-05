@@ -1,4 +1,5 @@
 from . import (
+    sshkeyboard,
     base,
     factory,
     pynput,
@@ -10,6 +11,7 @@ from .pynput import PynputBasedKeyMonitor
 
 __all__ = [
     base.__name__,
+    sshkeyboard.__name__,
     factory.__name__,
     pynput.__name__,
     BaseKeyMonitor.__name__,
