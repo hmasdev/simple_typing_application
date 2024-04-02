@@ -1,3 +1,4 @@
+from __future__ import annotations
 from logging import getLogger, Logger
 
 from .base import BaseUserInterface

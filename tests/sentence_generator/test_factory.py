@@ -1,4 +1,15 @@
+from __future__ import annotations
 import pytest
+
+try:
+    import torch  # type: ignore # noqa
+    import accelerate  # type: ignore # noqa
+    import protobuf  # type: ignore # noqa
+    import transformers  # type: ignore # noqa
+    import sentencepiece  # type: ignore # noqa
+    HUGGINGFACE_SETUP = True
+except ImportError:
+    HUGGINGFACE_SETUP = False
 
 from simple_typing_application.const.sentence_generator import ESentenceGeneratorType  # noqa
 from simple_typing_application.models.config_models.sentence_generator_config_model import (  # noqa
@@ -64,11 +75,6 @@ def test_select_class_and_config_model_raise_value_error():
             OpenaiSentenceGenerator,
         ),
         (
-            ESentenceGeneratorType.HUGGINGFACE,
-            HuggingfaceSentenceGeneratorConfigModel().model_dump(),
-            HuggingfaceSentenceGenerator,
-        ),
-        (
             ESentenceGeneratorType.STATIC,
             StaticSentenceGeneratorConfigModel(text_kana_map={}).model_dump(),
             StaticSentenceGenerator,
@@ -79,16 +85,26 @@ def test_select_class_and_config_model_raise_value_error():
             OpenaiSentenceGenerator,
         ),
         (
-            ESentenceGeneratorType.HUGGINGFACE,
-            {},
-            HuggingfaceSentenceGenerator,
-        ),
-        (
             ESentenceGeneratorType.STATIC,
             {},
             StaticSentenceGenerator,
         ),
-    ]
+    ] + (
+        [
+            (
+                ESentenceGeneratorType.HUGGINGFACE,
+                HuggingfaceSentenceGeneratorConfigModel().model_dump(),
+                HuggingfaceSentenceGenerator,
+            ),
+            (
+                ESentenceGeneratorType.HUGGINGFACE,
+                {},
+                HuggingfaceSentenceGenerator,
+            ),
+        ]
+        if HUGGINGFACE_SETUP else
+        []
+    )
 )
 def test_create_sentence_generator(
     sentence_generator_type: ESentenceGeneratorType,
@@ -103,9 +119,10 @@ def test_create_sentence_generator(
     mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ConversationChain')  # noqa
     mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ConversationBufferMemory')  # noqa
     # for HuggingfaceSentenceGenerator
-    mocker.patch('simple_typing_application.sentence_generator.huggingface_sentence_generator.AutoModelForCausalLM.from_pretrained')  # noqa
-    mocker.patch('simple_typing_application.sentence_generator.huggingface_sentence_generator.AutoTokenizer.from_pretrained')  # noqa
-    mocker.patch('simple_typing_application.sentence_generator.huggingface_sentence_generator.pipeline')  # noqa
+    if HUGGINGFACE_SETUP:
+        mocker.patch('simple_typing_application.sentence_generator.huggingface_sentence_generator.AutoModelForCausalLM.from_pretrained')  # noqa
+        mocker.patch('simple_typing_application.sentence_generator.huggingface_sentence_generator.AutoTokenizer.from_pretrained')  # noqa
+        mocker.patch('simple_typing_application.sentence_generator.huggingface_sentence_generator.pipeline')  # noqa
     # for StaticSentenceGenerator
     # None
 

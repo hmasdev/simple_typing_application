@@ -5,28 +5,29 @@
 ![GitHub](https://img.shields.io/github/license/hmasdev/simple_typing_application)
 ![GitHub last commit](https://img.shields.io/github/last-commit/hmasdev/simple_typing_application)
 
+![pytest](https://github.com/hmasdev/simple_typing_application/actions/workflows/pytest.yaml/badge.svg)
+![flake8](https://github.com/hmasdev/simple_typing_application/actions/workflows/code-style-check.yaml/badge.svg)
+![mypy](https://github.com/hmasdev/simple_typing_application/actions/workflows/static-type-check.yaml/badge.svg)
+
 ![application image](./pics/application.png)
 
 ## Requires
 
+
 - Python >= 3.8
 
-### Dependencies
+  - `click`
+  - `langchain`
+  - `openai`
+  - `pydantic`
+  - `pynput`
+  - `requests`
+  - `types-pynput`
+  - `types-requests`
 
-- `click`
-- `langchain`
-- `openai`
-- `pydantic`
-- `pynput`
-- `requests`
-- `types-pynput`
-- `types-requests`
+- OpenAI API Key
 
-### Others
-
-- OpenAI API
-
-See `setup.cfg` for other optional dependencies.
+See `pyproject.toml` for detail information.
 
 ## Installation
 
@@ -50,7 +51,7 @@ You can specify the following optional dependencies:
 - `[extra]`
 - `[dev]`
 
-For more details, see [`./setup.cfg`](./setup.cfg).
+For more details, see [`./pyproject.toml`](./pyproject.toml).
 
 ## Usage
 
@@ -203,41 +204,71 @@ Refer to [`./sample_record.json`](./sample_record.json) for example.
 
 ## Development
 
-### Preparation
+1. Fork this repository:
+   - [https://github.com/hmasdev/simple_typing_application/fork](https://github.com/hmasdev/simple_typing_application/fork)
 
-```bash
-$ git clone https://github.com/hmasdev/simple_typing_application.git
-$ cd simple_typing_application
-$ pip install .[huggingface,extra,dev]
-```
+2. Clone your forked repository:
 
-or 
+   ```bash
+   $ git clone https://github.com/hmasdev/simple_typing_application
+   $ cd simple_typing_application
+   ```
 
-```bash
-$ git clone https://github.com/hmasdev/simple_typing_application.git
-$ cd simple_typing_application
-$ pip install -r requirements.txt
-$ pip install -r requirements-dev.txt
-```
+3. Create your feature branch:
 
-### Devlopment
+   ```bash
+   $ git checkout -b feature/your-feature
+   ```
 
-TBD
+4. Setup your development environment:
 
-### Test
+   ```bash
+   $ pip install .[dev]
+   ```
 
-```bash
-$ pytest  # Unit test
-$ pytest -m integrate  # integration test
-$ flake8 simple_typing_application
-$ flake8 tests
-$ mypy simple_typing_application
-$ mypy tests
-```
+   if you want to develop the application with `huggingface`, `pandas` and etc., run the following command:
 
-## Contribute
+   ```bash
+   $ pip install .[huggingface,extra,dev]
+   ```
 
-TBD
+   To know which option is available, see [`./pyproject.toml`](./pyproject.toml).
+
+5. Develop your feature and add tests.
+
+6. Test your feature:
+
+   ```bash
+   $ pytest  # Unit test
+   $ pytest -m integrate  # integration test
+   ```
+
+7. Check the code style and static type:
+
+   ```bash
+   $ flake8 simple_typing_application
+   $ flake8 tests
+   $ mypy simple_typing_application
+   $ mypy tests
+   ```
+
+8. Commit your changes:
+
+   ```bash
+   $ git add .
+   $ git commit -m "Add your feature"
+   ```
+
+9. Push to the branch:
+
+   ```bash
+   $ git push -u origin feature/your-feature
+   ```
+
+10. Create a new Pull Request:
+    - [https://github.com/hmasdev/simple_typing_application/compare](https://github.com/hmasdev/simple_typing_application/compare)
+
+Thank you for your contribution!
 
 ## LICENSE
 

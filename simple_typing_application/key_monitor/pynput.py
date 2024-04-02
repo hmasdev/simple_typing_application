@@ -1,3 +1,4 @@
+from __future__ import annotations
 from logging import getLogger, Logger
 from typing import Callable
 from pynput import keyboard

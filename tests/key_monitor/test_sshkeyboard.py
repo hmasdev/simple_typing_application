@@ -1,3 +1,4 @@
+from __future__ import annotations
 from threading import Thread
 import pytest
 from sshkeyboard import stop_listening

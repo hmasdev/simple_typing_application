@@ -1,3 +1,4 @@
+from __future__ import annotations
 import itertools
 from logging import getLogger, Logger
 from ..const.hiragana_romaji_map import HIRA2ROMA_MAP, SMALL_HIRA2ROMA_MAP

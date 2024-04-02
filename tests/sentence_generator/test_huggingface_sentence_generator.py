@@ -1,15 +1,31 @@
 import asyncio
 import logging
 import pytest
+
+try:
+    import torch  # type: ignore # noqa
+    import transformers  # type: ignore # noqa
+    HUGGINGFACE_SETUP = True
+except ImportError:
+    HUGGINGFACE_SETUP = False
+
 from simple_typing_application.models.typing_target_model import TypingTargetModel  # noqa
 from simple_typing_application.sentence_generator.base import BaseSentenceGenerator  # noqa
 from simple_typing_application.sentence_generator.huggingface_sentence_generator import HuggingfaceSentenceGenerator  # noqa
 
 
+@pytest.mark.skipif(
+    not HUGGINGFACE_SETUP,
+    reason='Libs for HuggingfaceSentenceGenerator like torch is not installed.',  # noqa
+)
 def test_inheritance():
     assert issubclass(HuggingfaceSentenceGenerator, BaseSentenceGenerator)
 
 
+@pytest.mark.skipif(
+    not HUGGINGFACE_SETUP,
+    reason='Libs for HuggingfaceSentenceGenerator like torch is not installed.',  # noqa
+)
 def test_generate(mocker):
 
     # preparation
@@ -68,6 +84,10 @@ def test_generate(mocker):
     assert actual == expected
 
 
+@pytest.mark.skipif(
+    not HUGGINGFACE_SETUP,
+    reason='Libs for HuggingfaceSentenceGenerator like torch is not installed.',  # noqa
+)
 @pytest.mark.integrate
 def test_generate_integrate():
     # execute

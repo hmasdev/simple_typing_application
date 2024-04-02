@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pydantic import BaseModel
 
 from .key_monitor_config_model import BaseKeyMonitorConfigModel

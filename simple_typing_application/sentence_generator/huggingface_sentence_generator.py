@@ -1,8 +1,12 @@
+from __future__ import annotations
 from logging import getLogger, Logger
 from typing import Callable
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
+try:
+    import torch  # type: ignore
+    from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline  # type: ignore  # noqa
+except ImportError:
+    pass
 
 from .base import BaseSentenceGenerator
 from ..models.typing_target_model import TypingTargetModel
@@ -25,11 +29,14 @@ class HuggingfaceSentenceGenerator(BaseSentenceGenerator):
         do_sample: bool = True,
         top_k: int = 50,
         top_p: float = 0.95,
-        device: str = 'cuda',
+        torch_dtype: 'torch.dtype' | None = None,
+        device: str | None = None,
         logger: Logger = getLogger(__name__),
     ) -> None:
+        torch_dtype = torch_dtype or torch.float32
+        device = device or ('cuda' if torch.cuda.is_available() else 'cpu')
         self._tokenizer = AutoTokenizer.from_pretrained(model, use_fast=False)  # noqa
-        self._model = AutoModelForCausalLM.from_pretrained(model, torch_dtype=torch.float16)  # noqa
+        self._model = AutoModelForCausalLM.from_pretrained(model, torch_dtype=torch_dtype)  # noqa
         self._generator = pipeline('text-generation', model=self._model, tokenizer=self._tokenizer, device=device)  # noqa
         self._max_length = max_length
         self._do_sample = do_sample

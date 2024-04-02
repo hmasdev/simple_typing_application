@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from __future__ import annotations
+from pydantic import BaseModel, SecretStr
 
 
 class BaseSentenceGeneratorConfigModel(BaseModel):
@@ -8,7 +9,7 @@ class BaseSentenceGeneratorConfigModel(BaseModel):
 class OpenAISentenceGeneratorConfigModel(BaseSentenceGeneratorConfigModel):
     model: str = 'gpt-3.5-turbo-16k'
     temperature: float = 0.7
-    openai_api_key: str | None = None
+    openai_api_key: SecretStr | None = None
     memory_size: int = 0
     max_retry: int = 5
 

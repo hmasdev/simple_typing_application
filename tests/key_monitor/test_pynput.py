@@ -1,3 +1,4 @@
+from __future__ import annotations
 from pynput import keyboard
 import pytest
 from simple_typing_application.const.keys import EMetaKey

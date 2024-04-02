@@ -1,11 +1,13 @@
+from __future__ import annotations
 from datetime import datetime as dt
 import json
 from logging import getLogger, Logger
 from typing import Callable
 
-from langchain.chat_models import ChatOpenAI
+from langchain_openai import ChatOpenAI
 from langchain.chains import ConversationChain
 from langchain.memory import ConversationBufferMemory
+from langchain.pydantic_v1 import SecretStr
 
 from .base import BaseSentenceGenerator
 from ..models.typing_target_model import TypingTargetModel
@@ -20,7 +22,7 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
         self,
         model: str = 'gpt-3.5-turbo-16k',
         temperature: float = .7,
-        openai_api_key: str | None = None,
+        openai_api_key: SecretStr | None = None,
         memory_size: int = 1,
         max_retry: int = 5,
         logger: Logger = getLogger(__name__),
@@ -30,7 +32,7 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
         self._llm = ChatOpenAI(
             model=model,
             temperature=temperature,
-            openai_api_key=openai_api_key,
+            api_key=openai_api_key,
         )
         self._memory = ConversationBufferMemory(k=memory_size)  # type: ignore  # noqa
         self._chain = ConversationChain(llm=self._llm, memory=self._memory)  # type: ignore  # noqa

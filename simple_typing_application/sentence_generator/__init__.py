@@ -2,11 +2,9 @@ from . import (
     base,
     factory,
     openai_sentence_generator,
-    huggingface_sentence_generator,
     static_sentence_generator,
     utils,
 )
-
 from .base import BaseSentenceGenerator
 from .factory import create_sentence_generator
 from .openai_sentence_generator import OpenaiSentenceGenerator
@@ -16,7 +14,6 @@ __all__ = [
     base.__name__,
     factory.__name__,
     openai_sentence_generator.__name__,
-    huggingface_sentence_generator.__name__,
     static_sentence_generator.__name__,
     utils.__name__,
 

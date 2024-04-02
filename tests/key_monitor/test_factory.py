@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pytest
 
 from simple_typing_application.const.key_monitor import EKeyMonitorType  # noqa

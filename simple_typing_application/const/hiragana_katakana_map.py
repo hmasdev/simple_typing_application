@@ -1,3 +1,4 @@
+from __future__ import annotations
 
 HIRAGANA: tuple[str, ...] = tuple(map(chr, range(0x3041, 0x3096 + 1)))
 KATAKANA: tuple[str, ...] = tuple(map(chr, range(0x30A1, 0x30F6 + 1)))

@@ -1,4 +1,4 @@
-# Path: sshkeyboard.py
+from __future__ import annotations
 from collections import deque
 from logging import getLogger, Logger
 from threading import Thread

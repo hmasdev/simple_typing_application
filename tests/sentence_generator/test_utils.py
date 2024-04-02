@@ -1,3 +1,4 @@
+from __future__ import annotations
 import pytest
 from simple_typing_application.const import ASCII_CHARS
 from simple_typing_application.sentence_generator.utils import (

@@ -1,0 +1,86 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["simple_typing_application"]
+
+[project]
+name = "simple_typing_application"
+dynamic = ["version"]
+authors = [{ name = "hmasdev", email = "hmasuidev1com@gmail.com" }]
+description = "Simple Typing Application: To Measure Your Typing Performance"
+readme = "README.md"
+license = { file = "LICENSE" }
+keywords = ["typing", "keyboard"]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.8"
+
+dependencies = [
+    "click",
+    "langchain",
+    "langchain_openai",
+    "openai",
+    "pydantic",
+    "pynput",
+    "requests",
+    "sshkeyboard",
+    "types-pynput",
+    "types-requests",
+]
+
+[project.urls]
+Repository = "https://github.com/hmasdev/simple_typing_application"
+
+[project.optional-dependencies]
+extra = ["jupyter", "jupyterlab", "matplotlib", "pandas", "seaborn"]
+
+huggingface = [
+    "torch",
+    "accelerate",
+    "protobuf",
+    "transformers",
+    "sentencepiece",
+]
+
+dev = [
+    "autopep8",
+    "eval_type_backport",
+    "flake8",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "twine",
+    "wheel",
+]
+
+[tool.setuptools.dynamic]
+version = { attr = "simple_typing_application.__version__" }
+
+[tool.pytest.ini_options]
+addopts = "--cov=simple_typing_application --cov-branch --cov-report=term-missing --cov-report=xml --doctest-modules"
+minversion = 6.0
+testpaths = ["tests"]
+markers = ["integrate: integration test"]
+
+[tool.mypy]
+warn_return_any = true
+warn_unused_configs = true
+
+[[tool.mypy.overrides]]
+module = "sshkeyboard"
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = "transformers"
+ignore_missing_imports = true
