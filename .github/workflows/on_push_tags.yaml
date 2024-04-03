@@ -38,6 +38,10 @@ jobs:
       - name: Build
         run: |
           python setup.py sdist bdist_wheel
+          $TARGZNAME = (Get-ChildItem -Name .\dist\*.tar.gz)
+          $WHLNAME = (Get-ChildItem -Name .\dist\*.whl)
+          echo "TARGZNAME=$TARGZNAME" | Out-File -FilePath $env:GITHUB_ENV -Append
+          echo "WHLNAME=$WHLNAME" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Release
         id: release
@@ -56,7 +60,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.release.outputs.upload_url }}
-          asset_path: dist/*.tar.gz
+          asset_path: dist\${{ env.TARGZNAME }}
+          asset_name: ${{ env.TARGZNAME }}
           asset_content_type: application/gzip
 
       - name: Publish .whl
@@ -65,5 +70,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.release.outputs.upload_url }}
-          asset_path: dist/*.whl
+          asset_path: dist\${{ env.WHLNAME }}
+          asset_name: ${{ env.WHLNAME }}
           asset_content_type: application/zip
