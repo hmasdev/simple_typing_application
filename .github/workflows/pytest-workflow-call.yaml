@@ -2,6 +2,11 @@ name: Pytest
 
 on:
   workflow_call:
+    inputs:
+      git-ref:
+        required: false
+        type: string
+        default: "main"
 
 jobs:
   test:
@@ -11,7 +16,9 @@ jobs:
         python-version: [3.8, 3.9, "3.10", "3.11", "3.12"]
         option: ["", "huggingface,", "extra,"]
     steps:
-      - uses: actions/checkout@v1
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ inputs.git-ref }}
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v1
         with:
