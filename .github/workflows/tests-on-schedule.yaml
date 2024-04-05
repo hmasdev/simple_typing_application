@@ -1,8 +1,8 @@
-name: On Schedule
+name: Scheduled Tests
 
 on:
   schedule:
-    - cron: "0 17 * * 6"
+    - cron: "0 17 * * 5"
 
 jobs:
   test:
