@@ -5,14 +5,11 @@
 ![GitHub](https://img.shields.io/github/license/hmasdev/simple_typing_application)
 ![GitHub last commit](https://img.shields.io/github/last-commit/hmasdev/simple_typing_application)
 
-![pytest](https://github.com/hmasdev/simple_typing_application/actions/workflows/pytest.yaml/badge.svg)
-![flake8](https://github.com/hmasdev/simple_typing_application/actions/workflows/code-style-check.yaml/badge.svg)
-![mypy](https://github.com/hmasdev/simple_typing_application/actions/workflows/static-type-check.yaml/badge.svg)
+![Scheduled Tests](https://github.com/hmasdev/simple_typing_application/actions/workflows/tests-on-schedule.yaml/badge.svg)
 
 ![application image](./pics/application.png)
 
 ## Requires
-
 
 - Python >= 3.8
 
@@ -40,9 +37,9 @@ pip install git+https://github.com/hmasdev/simple_typing_application.git
 If you want to install the full-version, i.e. `simple_typing_application` with data analysis packages like `pandas`, `matplotlib` and `jupyterlab`, specify `[extra]`.
 
 ```bash
-$ git clone https://github.com/hmasdev/simple_typing_application.git
-$ cd simple_typing_application
-$ pip install .[extra]
+git clone https://github.com/hmasdev/simple_typing_application.git
+cd simple_typing_application
+pip install .[extra]
 ```
 
 You can specify the following optional dependencies:
@@ -210,20 +207,20 @@ Refer to [`./sample_record.json`](./sample_record.json) for example.
 2. Clone your forked repository:
 
    ```bash
-   $ git clone https://github.com/hmasdev/simple_typing_application
-   $ cd simple_typing_application
+   git clone https://github.com/hmasdev/simple_typing_application
+   cd simple_typing_application
    ```
 
 3. Create your feature branch:
 
    ```bash
-   $ git checkout -b feature/your-feature
+   git checkout -b feature/your-feature
    ```
 
 4. Setup your development environment:
 
    ```bash
-   $ pip install .[dev]
+   pip install .[dev]
    ```
 
    if you want to develop the application with `huggingface`, `pandas` and etc., run the following command:
@@ -239,30 +236,30 @@ Refer to [`./sample_record.json`](./sample_record.json) for example.
 6. Test your feature:
 
    ```bash
-   $ pytest  # Unit test
-   $ pytest -m integrate  # integration test
+   pytest  # Unit test
+   pytest -m integrate  # integration test
    ```
 
 7. Check the code style and static type:
 
    ```bash
-   $ flake8 simple_typing_application
-   $ flake8 tests
-   $ mypy simple_typing_application
-   $ mypy tests
+   flake8 simple_typing_application
+   flake8 tests
+   mypy simple_typing_application
+   mypy tests
    ```
 
 8. Commit your changes:
 
    ```bash
-   $ git add .
-   $ git commit -m "Add your feature"
+   git add .
+   git commit -m "Add your feature"
    ```
 
 9. Push to the branch:
 
    ```bash
-   $ git push -u origin feature/your-feature
+   git push -u origin feature/your-feature
    ```
 
 10. Create a new Pull Request:
