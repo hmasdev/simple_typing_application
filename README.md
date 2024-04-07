@@ -15,10 +15,13 @@
 
   - `click`
   - `langchain`
+  - `langchain_openai`
   - `openai`
   - `pydantic`
   - `pynput`
+  - `python-dotenv`
   - `requests`
+  - `sshkeyboard`
   - `types-pynput`
   - `types-requests`
 
