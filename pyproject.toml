@@ -32,6 +32,7 @@ dependencies = [
     "openai",
     "pydantic",
     "pynput",
+    "python-dotenv",
     "requests",
     "sshkeyboard",
     "types-pynput",

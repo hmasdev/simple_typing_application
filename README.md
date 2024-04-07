@@ -83,7 +83,11 @@ The content of `./sample_config.json` is as follows:
 ```
 
 As default, the contents of 'sample_config.json' are used except `openai_api_key`.
-In this case, you should add an environment variable `OPENAI_API_KEY` which contains your API key.
+In this case, you should add an environment variable `OPENAI_API_KEY` which contains your API key or create `.env` file like
+
+```bash
+OPENAI_API_KEY={HERE_IS_YOUR_API_KEY}
+```
 
 #### Sentence Generator
 
