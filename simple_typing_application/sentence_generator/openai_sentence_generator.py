@@ -22,17 +22,20 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
         self,
         model: str = 'gpt-3.5-turbo-16k',
         temperature: float = .7,
-        openai_api_key: SecretStr | None = None,
+        openai_api_key: SecretStr | str | None = None,
         memory_size: int = 1,
         max_retry: int = 5,
         logger: Logger = getLogger(__name__),
     ):
         self._max_retry = max_retry
-
         self._llm = ChatOpenAI(
             model=model,
             temperature=temperature,
-            api_key=openai_api_key,
+            openai_api_key=(
+                openai_api_key.get_secret_value()  # type: ignore
+                if hasattr(openai_api_key, 'get_secret_value') else
+                openai_api_key
+            ),
         )
         self._memory = ConversationBufferMemory(k=memory_size)  # type: ignore  # noqa
         self._chain = ConversationChain(llm=self._llm, memory=self._memory)  # type: ignore  # noqa
