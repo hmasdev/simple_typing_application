@@ -76,6 +76,7 @@ markers = ["integrate: integration test"]
 [tool.mypy]
 warn_return_any = true
 warn_unused_configs = true
+plugins = "pydantic.mypy"
 
 [[tool.mypy.overrides]]
 module = "sshkeyboard"
