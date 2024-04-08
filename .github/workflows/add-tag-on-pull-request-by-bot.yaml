@@ -7,11 +7,10 @@ on:
 jobs:
   add-tag:
     if: github.event.pull_request.merged == true
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Add Tag
-        shell: bash
         run: |
           # If the head of PR is "bot/update-version-to-<tag>", then the tag is <tag>
           if [[ ! ${{ github.head_ref }} =~ ^bot/update-version-to-.*$ ]]; then
