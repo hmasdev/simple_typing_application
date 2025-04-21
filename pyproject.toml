@@ -70,7 +70,7 @@ version = { attr = "simple_typing_application.__version__" }
 
 [tool.pytest.ini_options]
 addopts = "--cov=simple_typing_application --cov-branch --cov-report=term-missing --cov-report=xml --doctest-modules"
-minversion = 6.0
+minversion = "6.0"
 testpaths = ["tests"]
 markers = ["integrate: integration test"]
 
