@@ -31,8 +31,10 @@ jobs:
       - name: Check Version
         run: |
           # Check if the tag is the same as simple_typing_application.__version__
-          $git_ref="${{ inputs.git-ref }}"
+          $git_ref="${INPUTS_GIT_REF}"
           $parts=$git_ref -split "/"
           $tag=$parts[-1]
           echo "extracted tag from git-ref: $tag"
           python -c "import os; import simple_typing_application; assert simple_typing_application.__version__ == '$tag', (simple_typing_application.__version__, '$tag')"
+        env:
+          INPUTS_GIT_REF: ${{ inputs.git-ref }}
