@@ -115,7 +115,7 @@ def test_rerun_deco_with_callback():
 
     @rerun_deco(max_retry=max_retry, callback=callback)
     def func_w_errors():
-        nonlocal execution_ctr
+        nonlocal execution_ctr  # noqa
         if execution_ctr < 2:
             # 2 exceptions case
             raise Exception(f"execution count: {execution_ctr}")
@@ -142,7 +142,7 @@ def test_rerun_deco_async_with_callback():
 
     @rerun_deco(max_retry=max_retry, callback=callback)
     async def func_w_errors():
-        nonlocal execution_ctr
+        nonlocal execution_ctr  # noqa
         if execution_ctr < 2:
             # 2 exceptions case
             raise Exception(f"execution count: {execution_ctr}")
