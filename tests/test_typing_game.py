@@ -614,8 +614,8 @@ def test_typing_game__typing_step(
 
     # preparation
     def emulate_pressing_keys():
-        nonlocal typing_game
-        nonlocal expected_output
+        nonlocal typing_game  # noqa
+        nonlocal expected_output  # noqa
         # emulate pressing keys
         for record in expected_output.records:
             typing_game._TypingGame__on_press_callback(record.pressed_key)  # type: ignore  # noqa

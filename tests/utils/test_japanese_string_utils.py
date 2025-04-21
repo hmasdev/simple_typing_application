@@ -102,7 +102,7 @@ def test_excelapi_kanji2kana_request_get_raises_1error(mocker):
     # mock
     def mock_requests_get(*args, **kwargs):
         nonlocal ctr
-        nonlocal mock_response  # type: ignore
+        nonlocal mock_response  # type: ignore  # noqa
         ctr += 1
         if ctr == 1:
             raise requests.exceptions.RequestException()
