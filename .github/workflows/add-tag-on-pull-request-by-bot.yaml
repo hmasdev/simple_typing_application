@@ -13,7 +13,7 @@ jobs:
       - name: Add Tag
         run: |
           # If the head of PR is "bot/update-version-to-<tag>", then the tag is <tag>
-          if [[ ! $GITHUB_HEAD_REF =~ ^bot/update-version-to-.*$ ]]; then
+          if [[ ! "${GITHUB_HEAD_REF}" =~ ^bot/update-version-to-.*$ ]]; then
             echo "PR head does not match the pattern 'bot/update-version-to-<tag>'"
             echo "Skipping..."
             exit 0
