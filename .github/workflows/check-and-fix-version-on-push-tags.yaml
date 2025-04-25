@@ -11,7 +11,7 @@ jobs:
     with:
       git-ref: ${{ github.ref }}
     permissions:
-      contents: read
+      contents: write
       pull-requests: write
   update-version:
     needs: [validate-tag]
