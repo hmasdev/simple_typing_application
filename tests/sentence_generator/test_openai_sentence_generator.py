@@ -65,6 +65,15 @@ def test__OutputSchema_build_typing_target():
 def test_generate(mocker):
 
     # preparation
+    mocker.patch(
+        "simple_typing_application.sentence_generator.openai_sentence_generator.ChatOpenAI",
+        autospec=True,
+    )
+    mocker.patch(
+        "simple_typing_application.sentence_generator.openai_sentence_generator.create_agent",
+        autospec=True,
+        return_value=mocker.Mock(),
+    )
     sentence_generator = OpenaiSentenceGenerator()
     sentence_generator._agent = mocker.Mock()
     sentence_generator._agent.ainvoke = mocker.AsyncMock(return_value={
