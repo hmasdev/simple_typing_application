@@ -67,7 +67,7 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
         self.generate = rerun_deco(  # type: ignore
             self.generate,
             max_retry=max_retry,
-            callback=self._memory.clear,
+            callback=self._retry_callback,
             logger=logger,
         )
         self._logger = logger
