@@ -31,18 +31,36 @@ See `pyproject.toml` for detail information.
 
 ## Installation
 
-You can install `simple_typing_application` with `pip`.
+You can install `simple_typing_application` with pip or uv.
+
+Using pip:
 
 ```bash
 pip install git+https://github.com/hmasdev/simple_typing_application.git
 ```
 
+Using uv:
+
+```bash
+uv pip install git+https://github.com/hmasdev/simple_typing_application.git
+```
+
 If you want to install the full-version, i.e. `simple_typing_application` with data analysis packages like `pandas`, `matplotlib` and `jupyterlab`, specify `[extra]`.
+
+Using pip:
 
 ```bash
 git clone https://github.com/hmasdev/simple_typing_application.git
 cd simple_typing_application
 pip install .[extra]
+```
+
+Using uv:
+
+```bash
+git clone https://github.com/hmasdev/simple_typing_application.git
+cd simple_typing_application
+uv pip install .[extra]
 ```
 
 You can specify the following optional dependencies:
@@ -224,16 +242,16 @@ Refer to [`./sample_record.json`](./sample_record.json) for example.
    git checkout -b feature/your-feature
    ```
 
-4. Setup your development environment:
+4. Setup your development environment (uv recommended):
 
    ```bash
-   pip install .[dev]
+   uv sync
    ```
 
-   if you want to develop the application with `huggingface`, `pandas` and etc., run the following command:
+   If you want to include optional dependencies for development (e.g., `huggingface`, `pandas`, etc.), run:
 
    ```bash
-   $ pip install .[huggingface,extra,dev]
+   uv sync --extra huggingface --extra extra
    ```
 
    To know which option is available, see [`./pyproject.toml`](./pyproject.toml).
@@ -243,17 +261,17 @@ Refer to [`./sample_record.json`](./sample_record.json) for example.
 6. Test your feature:
 
    ```bash
-   pytest  # Unit test
-   pytest -m integrate  # integration test
+   uv run pytest  # Unit test
+   uv run pytest -m integrate  # integration test
    ```
 
 7. Check the code style and static type:
 
    ```bash
-   flake8 simple_typing_application
-   flake8 tests
-   mypy simple_typing_application
-   mypy tests
+   uv run flake8 simple_typing_application
+   uv run flake8 tests
+   uv run mypy simple_typing_application
+   uv run mypy tests
    ```
 
 8. Commit your changes:
