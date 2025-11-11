@@ -14,6 +14,9 @@ jobs:
       contents: write
       pull-requests: write
   update-version:
+    permissions:
+      contents: write
+      pull-requests: write
     needs: [validate-tag]
     if: ${{ failure() }}
     runs-on: ubuntu-latest
