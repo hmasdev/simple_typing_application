@@ -31,5 +31,5 @@ jobs:
           uv sync --dev
       - name: Code Style Check
         run: |
-          uv run flake8 simple_typing_application --show-source
-          uv run flake8 tests --show-source
+          uv run ruff check simple_typing_application
+          uv run ruff check tests

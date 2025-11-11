@@ -268,8 +268,8 @@ Refer to [`./sample_record.json`](./sample_record.json) for example.
 7. Check the code style and static type:
 
    ```bash
-   uv run flake8 simple_typing_application
-   uv run flake8 tests
+   uv run ruff check simple_typing_application
+   uv run ruff check tests
    uv run mypy simple_typing_application
    uv run mypy tests
    ```
