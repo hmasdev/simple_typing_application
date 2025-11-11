@@ -116,8 +116,6 @@ def test_create_sentence_generator(
     # mock
     # for OpenaiSentenceGenerator
     mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ChatOpenAI')  # noqa
-    mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ConversationChain')  # noqa
-    mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ConversationBufferMemory')  # noqa
     # for HuggingfaceSentenceGenerator
     if HUGGINGFACE_SETUP:
         mocker.patch('simple_typing_application.sentence_generator.huggingface_sentence_generator.AutoModelForCausalLM.from_pretrained')  # noqa
