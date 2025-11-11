@@ -1,33 +1,25 @@
 import asyncio
 import os
-from unittest.mock import AsyncMock
 import pytest
 from simple_typing_application.models.typing_target_model import TypingTargetModel  # noqa
 from simple_typing_application.sentence_generator.base import BaseSentenceGenerator  # noqa
-from simple_typing_application.sentence_generator.openai_sentence_generator import OpenaiSentenceGenerator  # noqa
+from simple_typing_application.sentence_generator.openai_sentence_generator import (  # noqa
+    _OutputSchema,
+    OpenaiSentenceGenerator,
+)
 
 
 def test_inheritance():
     assert issubclass(OpenaiSentenceGenerator, BaseSentenceGenerator)
 
 
-def test_clean(mocker):
-
-    # mock
-    mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ChatOpenAI')  # noqa
-    mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ConversationBufferMemory')  # noqa
-    mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ConversationChain')  # noqa
+def test__OutputSchema_build_typing_target():
 
     # preparation
-    s = """以下が出力です。
-
-```json
-{
-    "text": "text これはサンプルの文章です。",
-    "text_hiragana_alphabet_symbol": "text これはさんぷるのぶんしょうです。"
-}
-```
-"""
+    output_schema = _OutputSchema(
+        text="text これはサンプルの文章です。",
+        text_hiragana_alphabet_symbol="text これはさんぷるのぶんしょうです。",
+    )
     expected = TypingTargetModel(
         text="text これはサンプルの文章です。",
         text_hiragana_alphabet_symbol="text これはさんぷるのぶんしょうです。",
@@ -59,7 +51,7 @@ def test_clean(mocker):
     )
 
     # execute
-    actual = OpenaiSentenceGenerator().clean(s)
+    actual = output_schema.build_typing_target()
 
     # sort the list of list
     # NOTE: the order of the list of list is not important.
@@ -72,21 +64,25 @@ def test_clean(mocker):
 
 def test_generate(mocker):
 
-    # mock
-    mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ChatOpenAI')  # noqa
-    mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ConversationBufferMemory')  # noqa
-    mock_chain = mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ConversationChain', new=AsyncMock)  # noqa
-    mock_chain.arun = AsyncMock(return_value="""以下が出力です。
-
-```json
-{
-    "text": "text これはサンプルの文章です。",
-    "text_hiragana_alphabet_symbol": "text これはさんぷるのぶんしょうです。"
-}
-```
-""")
-
     # preparation
+    mocker.patch(
+        "simple_typing_application.sentence_generator.openai_sentence_generator.ChatOpenAI",  # noqa
+        autospec=True,
+    )
+    mocker.patch(
+        "simple_typing_application.sentence_generator.openai_sentence_generator.create_agent",  # noqa
+        autospec=True,
+        return_value=mocker.Mock(),
+    )
+    sentence_generator = OpenaiSentenceGenerator()
+    sentence_generator._agent = mocker.Mock()
+    sentence_generator._agent.ainvoke = mocker.AsyncMock(return_value={
+        "structured_response": _OutputSchema(
+            text="text これはサンプルの文章です。",
+            text_hiragana_alphabet_symbol="text これはさんぷるのぶんしょうです。",
+        )
+    })
+
     expected = TypingTargetModel(
         text="text これはサンプルの文章です。",
         text_hiragana_alphabet_symbol="text これはさんぷるのぶんしょうです。",
@@ -118,7 +114,7 @@ def test_generate(mocker):
     )
 
     # execute
-    actual = asyncio.run(OpenaiSentenceGenerator().generate())
+    actual = asyncio.run(sentence_generator.generate())
 
     # sort the list of list
     # NOTE: the order of the list of list is not important.
