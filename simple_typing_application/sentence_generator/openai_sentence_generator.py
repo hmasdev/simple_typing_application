@@ -1,13 +1,11 @@
 from __future__ import annotations
 from datetime import datetime as dt
-import json
 from logging import getLogger, Logger
-from typing import Callable
+from typing import Any, Callable, cast
 
+from langchain.agents import create_agent
 from langchain_openai import ChatOpenAI
-from langchain.chains import ConversationChain
-from langchain.memory import ConversationBufferMemory
-from langchain.pydantic_v1 import SecretStr
+from pydantic import BaseModel, Field, SecretStr
 
 from .base import BaseSentenceGenerator
 from ..models.typing_target_model import TypingTargetModel
@@ -16,46 +14,118 @@ from ..utils.japanese_string_utils import delete_space_between_hiraganas
 from ..utils.rerun import rerun_deco
 
 
+class _OutputSchema(BaseModel):
+    text: str = Field(..., description='生成された一文')
+    text_hiragana_alphabet_symbol: str = Field(  # noqa
+        ..., description='一文をひらがな、アルファベット、記号のみに変換したもの'  # noqa
+    )
+
+    def build_typing_target(self) -> TypingTargetModel:
+        dic: dict[str, str | list[list[str]]] = {}
+        # assign values
+        dic['text'] = self.text
+        # delete space between hiraganas
+        dic['text_hiragana_alphabet_symbol'] = delete_space_between_hiraganas(
+            self.text_hiragana_alphabet_symbol
+        )
+        # create typing target
+        splitted = split_hiraganas_alphabets_symbols(
+            self.text_hiragana_alphabet_symbol
+        )
+        dic['typing_target'] = splitted_hiraganas_alphabets_symbols_to_typing_target(splitted)  # noqa
+        return TypingTargetModel(**dic)
+
+
 class OpenaiSentenceGenerator(BaseSentenceGenerator):
 
     def __init__(
         self,
-        model: str = 'gpt-3.5-turbo-16k',
+        model: str = 'gpt-5-nano',
         temperature: float = .7,
         openai_api_key: SecretStr | str | None = None,
-        memory_size: int = 1,
+        memory_size: int = 5,
         max_retry: int = 5,
+        seed: int | None = None,
         logger: Logger = getLogger(__name__),
     ):
-        self._max_retry = max_retry
-        self._llm = ChatOpenAI(
+        chat_model = ChatOpenAI(
             model=model,
             temperature=temperature,
-            openai_api_key=(
-                openai_api_key.get_secret_value()  # type: ignore
-                if hasattr(openai_api_key, 'get_secret_value') else
-                openai_api_key
+            max_retries=max_retry,
+            api_key=(
+                (lambda: openai_api_key)
+                if isinstance(openai_api_key, str)
+                else openai_api_key
             ),
+            seed=seed,
         )
-        self._memory = ConversationBufferMemory(k=memory_size)  # type: ignore  # noqa
-        self._chain = ConversationChain(llm=self._llm, memory=self._memory)  # type: ignore  # noqa
-        self.generate = rerun_deco(self.generate, max_retry=max_retry, callback=self._memory.clear, logger=logger)  # type: ignore  # noqa
+        self._agent = create_agent(
+            model=chat_model,
+            response_format=_OutputSchema,
+        )
+        self._memory: list[_OutputSchema] = []
+        self._memory_size = memory_size
+        self.generate = rerun_deco(  # type: ignore
+            self.generate,
+            max_retry=max_retry,
+            callback=self._retry_callback,
+            logger=logger,
+        )
         self._logger = logger
+
+    def _retry_callback(self) -> None:
+        if self._memory:
+            self._logger.info(
+                'reducing memory size: '
+                f'{len(self._memory)} -> {len(self._memory) - 1}'
+            )
+            del self._memory[0]
 
     async def generate(
         self,
         callback: Callable[[TypingTargetModel], TypingTargetModel] | None = None,  # noqa
     ) -> TypingTargetModel:
-        ret: str = await self._chain.arun(self._prompt)  # type: ignore
-        self._logger.debug(f'chain response: {ret}')
+
+        # invoke agent
+        messages = [
+            {
+                "role": "system",
+                "content": self._system_prompt,
+            },
+            {
+                "role": "user",
+                "content": self._user_prompt,
+            },
+        ]
+        self._logger.debug(f'agent input messages: {messages}')
+        ret: dict[str, Any] = await self._agent.ainvoke(
+            {"messages": messages},  # type: ignore
+        )
+        self._logger.debug(f'agent response: {ret}')
+
+        # store to memory
+        output = cast(_OutputSchema, ret["structured_response"])
+        self._memory.append(output)
+        if len(self._memory) > self._memory_size:
+            self._memory.pop(0)
+
+        # build typing target
+        cleaned_ret: TypingTargetModel = (
+            output.build_typing_target()
+        )
+
         if callback is None:
-            return self.clean(ret)
+            return cleaned_ret
         else:
-            return callback(self.clean(ret))
+            return callback(cleaned_ret)
 
     @property
-    def _prompt(self) -> str:
+    def _system_prompt(self) -> str:
         key = dt.now().strftime("%Y/%m/%d %H:%M:%S.%f")[::-1]
+        past_outputs = '\n'.join([
+            '- `' + m.model_dump_json(indent=None) + '`'
+            for m in self._memory
+        ])
         return f'''あなたは非常に優秀な日本語の短文作家です。
 あなたが素晴らしいと思う 20 文字以上の日本語の一文を下記の手順で step-by-step に生成してください。
 
@@ -79,21 +149,12 @@ Step 2. Step 1 で生成した一文に含まれる漢字もしくはカタカ�
 - 過去に出力した結果と類似する結果は出力しないでください。
 - 出力は結果のみとしてください。
 
+過去の出力
+{past_outputs}
+
 乱数シード：{key}
 '''  # noqa
 
-    def clean(self, s: str) -> TypingTargetModel:
-        # extract the json part
-        s = s.split("{")[-1].split("}")[0]
-        s = "{" + s + "}"
-        # convert to dict
-        dic = json.loads(s)
-        # delete space between hiraganas
-        dic['text_hiragana_alphabet_symbol'] = delete_space_between_hiraganas(dic['text_hiragana_alphabet_symbol'])  # noqa
-        # create typing target
-        splitted = split_hiraganas_alphabets_symbols(dic['text_hiragana_alphabet_symbol'])  # noqa
-        self._logger.debug(f'splitted pattern: {splitted}')
-        dic['typing_target'] = splitted_hiraganas_alphabets_symbols_to_typing_target(splitted)  # noqa
-        self._logger.debug(f'typing target: {dic["typing_target"]}')
-        # convert to TypingTargetModel
-        return TypingTargetModel(**dic)
+    @property
+    def _user_prompt(self) -> str:
+        return '生成してください。'
