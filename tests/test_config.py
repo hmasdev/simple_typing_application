@@ -33,7 +33,7 @@ def test_load_config_json(mocker):
     )
     # mock
     mocker.patch(
-        'builtins.open',
+        'simple_typing_application.config.open',
         mock_open(read_data=expected.model_dump_json(indent=4)),
     )
 
