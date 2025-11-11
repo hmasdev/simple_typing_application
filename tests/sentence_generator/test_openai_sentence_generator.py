@@ -66,11 +66,11 @@ def test_generate(mocker):
 
     # preparation
     mocker.patch(
-        "simple_typing_application.sentence_generator.openai_sentence_generator.ChatOpenAI",
+        "simple_typing_application.sentence_generator.openai_sentence_generator.ChatOpenAI",  # noqa
         autospec=True,
     )
     mocker.patch(
-        "simple_typing_application.sentence_generator.openai_sentence_generator.create_agent",
+        "simple_typing_application.sentence_generator.openai_sentence_generator.create_agent",  # noqa
         autospec=True,
         return_value=mocker.Mock(),
     )
