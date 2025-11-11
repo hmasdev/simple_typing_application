@@ -24,11 +24,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install requirements
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v1
+      - name: Install dependencies with uv
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e .[dev]
+          uv sync --dev
       - name: Static Type Check
         run: |
-          python -m mypy simple_typing_application
-          python -m mypy tests
+          uv run mypy simple_typing_application
+          uv run mypy tests
