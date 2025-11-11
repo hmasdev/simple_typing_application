@@ -94,7 +94,7 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
                 "content": self._user_prompt,
             },
         ]
-        self._logger.debug(f'chain input messages: {messages}')
+        self._logger.debug(f'agent input messages: {messages}')
         ret: dict[str, Any] = await self._agent.ainvoke(
             {"messages": messages},  # type: ignore
         )
