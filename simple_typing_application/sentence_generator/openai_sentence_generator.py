@@ -122,6 +122,10 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
     @property
     def _system_prompt(self) -> str:
         key = dt.now().strftime("%Y/%m/%d %H:%M:%S.%f")[::-1]
+        past_outputs = '\n'.join([
+            '- `' + m.model_dump_json(indent=None) + '`'
+            for m in self._memory
+        ])
         return f'''あなたは非常に優秀な日本語の短文作家です。
 あなたが素晴らしいと思う 20 文字以上の日本語の一文を下記の手順で step-by-step に生成してください。
 
@@ -146,7 +150,7 @@ Step 2. Step 1 で生成した一文に含まれる漢字もしくはカタカ�
 - 出力は結果のみとしてください。
 
 過去の出力
-{'\n'.join(['- `' + m.model_dump_json(indent=None) + '`' for m in self._memory])}
+{past_outputs}
 
 乱数シード：{key}
 '''  # noqa
