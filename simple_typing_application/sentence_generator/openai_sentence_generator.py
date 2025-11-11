@@ -64,6 +64,7 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
             response_format=_OutputSchema,
         )
         self._memory: list[_OutputSchema] = []
+        self._memory_size = memory_size
         self.generate = rerun_deco(  # type: ignore
             self.generate,
             max_retry=max_retry,
@@ -84,6 +85,8 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
         self,
         callback: Callable[[TypingTargetModel], TypingTargetModel] | None = None,  # noqa
     ) -> TypingTargetModel:
+
+        # invoke agent
         messages = [
             {
                 "role": "system",
@@ -100,9 +103,15 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
         )
         self._logger.debug(f'agent response: {ret}')
 
+        # store to memory
+        output = cast(_OutputSchema, ret["structured_response"])
+        self._memory.append(output)
+        if len(self._memory) > self._memory_size:
+            self._memory.pop(0)
+
+        # build typing target
         cleaned_ret: TypingTargetModel = (
-            cast(_OutputSchema, ret["structured_response"])
-            .build_typing_target()
+            output.build_typing_target()
         )
 
         if callback is None:
