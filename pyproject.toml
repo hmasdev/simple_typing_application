@@ -1,6 +1,6 @@
 [build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
 
 [tool.setuptools.packages.find]
 where = ["."]
@@ -56,7 +56,7 @@ huggingface = [
 dev = [
     "autopep8",
     "eval_type_backport",
-    "flake8",
+    "ruff",
     "mypy",
     "pytest",
     "pytest-cov",
@@ -65,8 +65,8 @@ dev = [
     "wheel",
 ]
 
-[tool.setuptools.dynamic]
-version = { attr = "simple_typing_application.__version__" }
+[tool.hatch.version]
+path = "simple_typing_application/__init__.py"
 
 [tool.pytest.ini_options]
 addopts = "--cov=simple_typing_application --cov-branch --cov-report=term-missing --cov-report=xml --doctest-modules"
@@ -86,3 +86,20 @@ ignore_missing_imports = true
 [[tool.mypy.overrides]]
 module = "transformers"
 ignore_missing_imports = true
+
+[tool.ruff]
+line-length = 120
+target-version = "py310"
+
+[tool.uv]
+dev-dependencies = [
+    "autopep8",
+    "eval_type_backport",
+    "ruff",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "twine",
+    "wheel",
+]
