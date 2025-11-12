@@ -10,7 +10,7 @@ from . import (
     typing_game,
 )
 
-__version__ = '0.1.1'
+__version__ = '0.2.0'
 
 __all__ = [
     const.__name__,
