@@ -65,9 +65,6 @@ dev = [
     "wheel",
 ]
 
-[tool.setuptools.dynamic]
-version = { attr = "simple_typing_application.__version__" }
-
 [tool.hatch.version]
 path = "simple_typing_application/__init__.py"
 
