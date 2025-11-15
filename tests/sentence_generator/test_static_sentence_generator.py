@@ -10,14 +10,16 @@ from simple_typing_application.sentence_generator.static_sentence_generator impo
 
 TUP_TYPING_TARGET: tuple[TypingTargetModel, ...] = (
     TypingTargetModel(
-        text='Hello, 世界！',
-        text_hiragana_alphabet_symbol='Hello、せかい！',
-        typing_target=list(map(sorted, [['H'], ['e'], ['l'], ['l'], ['o'], [','], ['se', 'ce'], ['ka', 'ca'], ['i', 'yi'], ['!']])),    # type: ignore # noqa
+        text="Hello, 世界！",
+        text_hiragana_alphabet_symbol="Hello、せかい！",
+        typing_target=list(
+            map(sorted, [["H"], ["e"], ["l"], ["l"], ["o"], [","], ["se", "ce"], ["ka", "ca"], ["i", "yi"], ["!"]])
+        ),  # type: ignore # noqa
     ),
     TypingTargetModel(
-        text='ファーブル',
-        text_hiragana_alphabet_symbol='ふぁーぶる',
-        typing_target=list(map(sorted, [['fa', 'huxa', 'hula', 'fuxa', 'fula'], ['-'], ['bu'], ['ru']])),    # type: ignore # noqa
+        text="ファーブル",
+        text_hiragana_alphabet_symbol="ふぁーぶる",
+        typing_target=list(map(sorted, [["fa", "huxa", "hula", "fuxa", "fula"], ["-"], ["bu"], ["ru"]])),  # type: ignore # noqa
     ),
 )
 
@@ -47,39 +49,28 @@ def test_inhertance():
                 tuple(
                     v
                     for k, v in TUP_TYPING_TARGET[random.randint(0, len(TUP_TYPING_TARGET) - 1)].model_dump().items()  # noqa
-                    if k in [
-                        'text',
-                        'text_hiragana_alphabet_symbol',
+                    if k
+                    in [
+                        "text",
+                        "text_hiragana_alphabet_symbol",
                     ]
                 )
                 for _ in range(5 * len(TUP_TYPING_TARGET))
             ],
         ),
-    ]
+    ],
 )
-def test__get_next(
-    is_random: bool,
-    state: tuple,
-    expecteds: list[tuple[str, str]],
-    mocker
-):
-
+def test__get_next(is_random: bool, state: tuple, expecteds: list[tuple[str, str]], mocker):
     # mock
     mock_excelapi_kanji2kana = mocker.patch(
-        'simple_typing_application.sentence_generator.static_sentence_generator.excelapi_kanji2kana',  # noqa
-        side_effect={
-            t.text: t.text_hiragana_alphabet_symbol
-            for t in TUP_TYPING_TARGET
-        }.get,
+        "simple_typing_application.sentence_generator.static_sentence_generator.excelapi_kanji2kana",  # noqa
+        side_effect={t.text: t.text_hiragana_alphabet_symbol for t in TUP_TYPING_TARGET}.get,
     )
 
     # preparation
     num_calls: int = len(expecteds)
     generator = StaticSentenceGenerator(
-        text_kana_map={
-            target.text: None
-            for target in TUP_TYPING_TARGET
-        },
+        text_kana_map={target.text: None for target in TUP_TYPING_TARGET},
         is_random=is_random,
     )
     # NOTE: to check whether _get_next generates targets cyclically  # noqa
@@ -100,10 +91,7 @@ def test__get_next(
         (
             False,
             random.getstate(),
-            [
-                TUP_TYPING_TARGET[idx % len(TUP_TYPING_TARGET)]
-                for idx in range(5 * len(TUP_TYPING_TARGET))
-            ],
+            [TUP_TYPING_TARGET[idx % len(TUP_TYPING_TARGET)] for idx in range(5 * len(TUP_TYPING_TARGET))],
         ),
         (
             True,
@@ -113,31 +101,19 @@ def test__get_next(
                 for _ in range(5 * len(TUP_TYPING_TARGET))
             ],
         ),
-    ]
+    ],
 )
-def test_generate(
-    is_random: bool,
-    state: tuple,
-    expecteds: list[TypingTargetModel],
-    mocker
-):
-
+def test_generate(is_random: bool, state: tuple, expecteds: list[TypingTargetModel], mocker):
     # mock
     mock_excelapi_kanji2kana = mocker.patch(
-        'simple_typing_application.sentence_generator.static_sentence_generator.excelapi_kanji2kana',  # noqa
-        side_effect={
-            t.text: t.text_hiragana_alphabet_symbol
-            for t in TUP_TYPING_TARGET
-        }.get,
+        "simple_typing_application.sentence_generator.static_sentence_generator.excelapi_kanji2kana",  # noqa
+        side_effect={t.text: t.text_hiragana_alphabet_symbol for t in TUP_TYPING_TARGET}.get,
     )
 
     # preparation
     num_calls: int = len(expecteds)
     generator = StaticSentenceGenerator(
-        text_kana_map={
-            target.text: None
-            for target in TUP_TYPING_TARGET
-        },
+        text_kana_map={target.text: None for target in TUP_TYPING_TARGET},
         is_random=is_random,
     )
     # NOTE: to check whether _get_next generates targets cyclically  # noqa

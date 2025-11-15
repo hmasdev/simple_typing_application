@@ -16,7 +16,6 @@ __all__ = [
     openai_sentence_generator.__name__,
     static_sentence_generator.__name__,
     utils.__name__,
-
     BaseSentenceGenerator.__name__,
     create_sentence_generator.__name__,
     OpenaiSentenceGenerator.__name__,

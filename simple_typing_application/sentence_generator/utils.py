@@ -5,7 +5,7 @@ from ..const.hiragana_romaji_map import HIRA2ROMA_MAP, SMALL_HIRA2ROMA_MAP
 
 
 def split_hiraganas_alphabets_symbols(s: str) -> list[str]:
-    '''Split a string into a list of hiraganas, alphabets, and symbols.
+    """Split a string into a list of hiraganas, alphabets, and symbols.
 
     Args:
         s (str): a string of hiraganas, alphabets, and symbols.
@@ -42,24 +42,24 @@ def split_hiraganas_alphabets_symbols(s: str) -> list[str]:
     >>> s = 'っきゃぁ'
     >>> split_hiraganas_alphabets_symbols(s)
     ['っきゃぁ']
-    '''
+    """
     # split hiraganas into patterns
     patterns: list[str] = []
     pattern: list[str] = []
-    for c, next_c in zip(s, s[1:]+' '):
+    for c, next_c in zip(s, s[1:] + " "):
         pattern.append(c)
-        if c in ['っ', 'ん'] or next_c in SMALL_HIRA2ROMA_MAP:
+        if c in ["っ", "ん"] or next_c in SMALL_HIRA2ROMA_MAP:
             # NOTE: 'っ' and 'ん' requires the next character.
             # NOTE: keys of SMALL_HIRA2ROMA_MAP require the previous character.
             # See ../const/hiragana_romaji_map.py.
             continue
         else:
-            patterns.append(''.join(pattern))
+            patterns.append("".join(pattern))
             pattern = []
 
-    if c in ['っ', 'ん']:
+    if c in ["っ", "ん"]:
         # Case: the sentence ends with 'っ' or 'ん'.
-        patterns.append(''.join(pattern))
+        patterns.append("".join(pattern))
         pattern = []
 
     return patterns
@@ -69,7 +69,7 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
     splitted_patterns: list[str],
     logger: Logger = getLogger(__name__),
 ) -> list[list[str]]:
-    '''Convert a list of splitted hiraganas, alphabets, and symbols into a typing target.
+    """Convert a list of splitted hiraganas, alphabets, and symbols into a typing target.
 
     Args:
         splitted_patterns (list[str]): a list of splitted hiraganas, alphabets, and symbols.
@@ -92,35 +92,38 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
     >>> splitted_patterns = ['っあ']
     >>> splitted_hiraganas_alphabets_symbols_to_typing_target(splitted_patterns)
     [['ltsua', 'ltua', 'xtsua', 'xtua']]
-    '''  # noqa
+    """  # noqa
 
     # initialize
     typing_targets: list[list[str]] = []
 
     for pattern in splitted_patterns:
-
         # clean
         # zenkaku ascii -> hankaku ascii
-        pattern = pattern.translate(str.maketrans(
-            "#　！＂＃＄％＆＇（）＊＋，－．／０１２３４５６７８９：；＜＝＞？＠ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ［＼］＾＿｀ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ｛｜｝～￥",  # noqa
-            "# !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¥",  # noqa
-        ))
+        pattern = pattern.translate(
+            str.maketrans(
+                "#　！＂＃＄％＆＇（）＊＋，－．／０１２３４５６７８９：；＜＝＞？＠ＡＢＣＤＥＦＧＨＩＪＫＬＭＮＯＰＱＲＳＴＵＶＷＸＹＺ［＼］＾＿｀ａｂｃｄｅｆｇｈｉｊｋｌｍｎｏｐｑｒｓｔｕｖｗｘｙｚ｛｜｝～￥",  # noqa
+                "# !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¥",  # noqa
+            )
+        )
         # zenkaku symbol -> hankaku symbol
-        pattern = pattern.translate(str.maketrans(
-            '、。・「」ー',
-            ',./[]-',
-        ))
+        pattern = pattern.translate(
+            str.maketrans(
+                "、。・「」ー",
+                ",./[]-",
+            )
+        )
 
         # pattern -> typing target
-        if pattern.isascii() or pattern == '¥':
+        if pattern.isascii() or pattern == "¥":
             # NOTE: pattern is typing target when pattern is ascii.
             typing_targets.append([pattern])
 
-        elif pattern == 'ん':
+        elif pattern == "ん":
             # Case: the sentence ends with 'ん'.
-            typing_targets.append([c for c in HIRA2ROMA_MAP[pattern] if c != 'n' and c is not None])  # noqa
+            typing_targets.append([c for c in HIRA2ROMA_MAP[pattern] if c != "n" and c is not None])  # noqa
 
-        elif pattern == 'っ':
+        elif pattern == "っ":
             # Case: the sentence ends with 'っ'.
             typing_targets.append([c for c in HIRA2ROMA_MAP[pattern] if c is not None])  # noqa
 
@@ -138,27 +141,21 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
             # split
             _splitted: list[str] = []
             for c in pattern:
-                if (
-                    c in SMALL_HIRA2ROMA_MAP
-                    and len(_splitted) > 0
-                    and _splitted[-1] + c in HIRA2ROMA_MAP
-                ):
+                if c in SMALL_HIRA2ROMA_MAP and len(_splitted) > 0 and _splitted[-1] + c in HIRA2ROMA_MAP:
                     _splitted[-1] += c
                 else:
                     _splitted.append(c)
 
             # extract typing targets from candidates
             candidate: tuple[str | None, ...]
-            for candidate in itertools.product(*[
-                HIRA2ROMA_MAP.get(c, SMALL_HIRA2ROMA_MAP.get(c, [c]))
-                for c in _splitted
-            ]):
-
+            for candidate in itertools.product(
+                *[HIRA2ROMA_MAP.get(c, SMALL_HIRA2ROMA_MAP.get(c, [c])) for c in _splitted]
+            ):
                 # preparation
                 target_flag = True
 
                 # check
-                if candidate[-1] == 'n' or candidate[-1] is None:
+                if candidate[-1] == "n" or candidate[-1] is None:
                     target_flag = False
                     continue
 
@@ -167,15 +164,15 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
                         # Example: 'tttu' -> 'ｔっつ'
                         target_flag = False
                         break
-                    if s is None and t is not None and t[0] in ['a', 'i', 'u', 'e', 'o', 'n']:  # noqa
+                    if s is None and t is not None and t[0] in ["a", "i", "u", "e", "o", "n"]:  # noqa
                         # Example: 'aa' -> not 'っあ' but 'ああ'
                         target_flag = False
                         break
-                    if s is None and t is not None and not ('a' <= t[0] <= 'z' or 'A' <= t[0] <= 'Z'):  # noqa
+                    if s is None and t is not None and not ("a" <= t[0] <= "z" or "A" <= t[0] <= "Z"):  # noqa
                         # Example: ',,' -> not 'っ、' but '、、'
                         target_flag = False
                         break
-                    if s == 'n' and t is not None and t[0] in ['a', 'i', 'u', 'e', 'o', 'n', 'y']:  # noqa
+                    if s == "n" and t is not None and t[0] in ["a", "i", "u", "e", "o", "n", "y"]:  # noqa
                         # Example: 'nna' -> not 'んな' but 'んあ'
                         target_flag = False
                         break
@@ -184,42 +181,45 @@ def splitted_hiraganas_alphabets_symbols_to_typing_target(
                     continue  # Skip this candidate.
 
                 # join
-                _joined = ''.join([
-                    x if x is not None else y[0]  # type: ignore
-                    # NOTE: when x is None, y is not None. See the above for-loop.  # noqa
-                    for x, y in zip(candidate, candidate[1:] + (None,))
-                ])
+                _joined = "".join(
+                    [
+                        x if x is not None else y[0]  # type: ignore
+                        # NOTE: when x is None, y is not None. See the above for-loop.  # noqa
+                        for x, y in zip(candidate, candidate[1:] + (None,))
+                    ]
+                )
 
                 # invalid repetition patterns
-                if 'xxtsu' in _joined:
+                if "xxtsu" in _joined:
                     # NOTE: 'xxtsu' -> 'ｘっ'
                     target_flag = False
                     continue
-                if 'lltsu' in _joined:
+                if "lltsu" in _joined:
                     # NOTE: 'lltsu' -> 'ｌっ'
                     target_flag = False
                     continue
 
                 # target registration
                 if target_flag:
-                    _target.append(''.join([
-                        x if x is not None else y[0]  # type: ignore
-                        # NOTE: when x is None, y is not None. See the above for-loop.  # noqa
-                        for x, y in zip(candidate, candidate[1:] + (None,))
-                    ]))
+                    _target.append(
+                        "".join(
+                            [
+                                x if x is not None else y[0]  # type: ignore
+                                # NOTE: when x is None, y is not None. See the above for-loop.  # noqa
+                                for x, y in zip(candidate, candidate[1:] + (None,))
+                            ]
+                        )
+                    )
 
             typing_targets.append(_target)
 
     # check
     for targets in typing_targets:
         for target in targets:
-            if not target.isascii() and target != '¥':
-                raise ValueError(f'Invalid typing target: {target}')
+            if not target.isascii() and target != "¥":
+                raise ValueError(f"Invalid typing target: {target}")
 
     # clean
-    typing_targets = [
-        sorted(set(targets))
-        for targets in typing_targets
-    ]
+    typing_targets = [sorted(set(targets)) for targets in typing_targets]
 
     return typing_targets

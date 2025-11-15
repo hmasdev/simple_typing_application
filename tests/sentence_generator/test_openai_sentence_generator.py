@@ -14,7 +14,6 @@ def test_inheritance():
 
 
 def test__OutputSchema_build_typing_target():
-
     # preparation
     output_schema = _OutputSchema(
         text="text これはサンプルの文章です。",
@@ -24,30 +23,58 @@ def test__OutputSchema_build_typing_target():
         text="text これはサンプルの文章です。",
         text_hiragana_alphabet_symbol="text これはさんぷるのぶんしょうです。",
         typing_target=[
-            ["t"], ["e"], ["x"], ["t"], [" "],
-            ['ko', 'co'],
-            ['re'],
-            ['ha'],
-            ['sa'],
+            ["t"],
+            ["e"],
+            ["x"],
+            ["t"],
+            [" "],
+            ["ko", "co"],
+            ["re"],
+            ["ha"],
+            ["sa"],
             ["nnpu", "n'pu", "xnpu", "npu"],
-            ['ru'],
-            ['no'],
-            ['bu'],
+            ["ru"],
+            ["no"],
+            ["bu"],
             [
-                "nnsyo", "n'syo", "xnsyo", "nsyo",
-                "nnsho", "n'sho", "xnsho", "nsho",
-                "nnsixyo", "n'sixyo", "xnsixyo", "nsixyo",
-                "nnsilyo", "n'silyo", "xnsilyo", "nsilyo",
-                "nnshixyo", "n'shixyo", "xnshixyo", "nshixyo",
-                "nnshilyo", "n'shilyo", "xnshilyo", "nshilyo",
-                "nncixyo", "n'cixyo", "xncixyo", "ncixyo",
-                "nncilyo", "n'cilyo", "xncilyo", "ncilyo",
+                "nnsyo",
+                "n'syo",
+                "xnsyo",
+                "nsyo",
+                "nnsho",
+                "n'sho",
+                "xnsho",
+                "nsho",
+                "nnsixyo",
+                "n'sixyo",
+                "xnsixyo",
+                "nsixyo",
+                "nnsilyo",
+                "n'silyo",
+                "xnsilyo",
+                "nsilyo",
+                "nnshixyo",
+                "n'shixyo",
+                "xnshixyo",
+                "nshixyo",
+                "nnshilyo",
+                "n'shilyo",
+                "xnshilyo",
+                "nshilyo",
+                "nncixyo",
+                "n'cixyo",
+                "xncixyo",
+                "ncixyo",
+                "nncilyo",
+                "n'cilyo",
+                "xncilyo",
+                "ncilyo",
             ],
-            ['u', 'wu', "whu"],
-            ['de'],
-            ['su'],
-            ['.'],
-        ]
+            ["u", "wu", "whu"],
+            ["de"],
+            ["su"],
+            ["."],
+        ],
     )
 
     # execute
@@ -63,7 +90,6 @@ def test__OutputSchema_build_typing_target():
 
 
 def test_generate(mocker):
-
     # preparation
     mocker.patch(
         "simple_typing_application.sentence_generator.openai_sentence_generator.ChatOpenAI",  # noqa
@@ -76,41 +102,71 @@ def test_generate(mocker):
     )
     sentence_generator = OpenaiSentenceGenerator()
     sentence_generator._agent = mocker.Mock()
-    sentence_generator._agent.ainvoke = mocker.AsyncMock(return_value={
-        "structured_response": _OutputSchema(
-            text="text これはサンプルの文章です。",
-            text_hiragana_alphabet_symbol="text これはさんぷるのぶんしょうです。",
-        )
-    })
+    sentence_generator._agent.ainvoke = mocker.AsyncMock(
+        return_value={
+            "structured_response": _OutputSchema(
+                text="text これはサンプルの文章です。",
+                text_hiragana_alphabet_symbol="text これはさんぷるのぶんしょうです。",
+            )
+        }
+    )
 
     expected = TypingTargetModel(
         text="text これはサンプルの文章です。",
         text_hiragana_alphabet_symbol="text これはさんぷるのぶんしょうです。",
         typing_target=[
-            ["t"], ["e"], ["x"], ["t"], [" "],
-            ['ko', 'co'],
-            ['re'],
-            ['ha'],
-            ['sa'],
+            ["t"],
+            ["e"],
+            ["x"],
+            ["t"],
+            [" "],
+            ["ko", "co"],
+            ["re"],
+            ["ha"],
+            ["sa"],
             ["nnpu", "n'pu", "xnpu", "npu"],
-            ['ru'],
-            ['no'],
-            ['bu'],
+            ["ru"],
+            ["no"],
+            ["bu"],
             [
-                "nnsyo", "n'syo", "xnsyo", "nsyo",
-                "nnsho", "n'sho", "xnsho", "nsho",
-                "nnsixyo", "n'sixyo", "xnsixyo", "nsixyo",
-                "nnsilyo", "n'silyo", "xnsilyo", "nsilyo",
-                "nnshixyo", "n'shixyo", "xnshixyo", "nshixyo",
-                "nnshilyo", "n'shilyo", "xnshilyo", "nshilyo",
-                "nncixyo", "n'cixyo", "xncixyo", "ncixyo",
-                "nncilyo", "n'cilyo", "xncilyo", "ncilyo",
+                "nnsyo",
+                "n'syo",
+                "xnsyo",
+                "nsyo",
+                "nnsho",
+                "n'sho",
+                "xnsho",
+                "nsho",
+                "nnsixyo",
+                "n'sixyo",
+                "xnsixyo",
+                "nsixyo",
+                "nnsilyo",
+                "n'silyo",
+                "xnsilyo",
+                "nsilyo",
+                "nnshixyo",
+                "n'shixyo",
+                "xnshixyo",
+                "nshixyo",
+                "nnshilyo",
+                "n'shilyo",
+                "xnshilyo",
+                "nshilyo",
+                "nncixyo",
+                "n'cixyo",
+                "xncixyo",
+                "ncixyo",
+                "nncilyo",
+                "n'cilyo",
+                "xncilyo",
+                "ncilyo",
             ],
-            ['u', 'wu', "whu"],
-            ['de'],
-            ['su'],
-            ['.'],
-        ]
+            ["u", "wu", "whu"],
+            ["de"],
+            ["su"],
+            ["."],
+        ],
     )
 
     # execute
@@ -126,10 +182,7 @@ def test_generate(mocker):
 
 
 @pytest.mark.integrate
-@pytest.mark.skipif(
-    os.getenv('OPENAI_API_KEY') is None,
-    reason='Environment variable "OPENAI_API_KEY" is not set.'
-)
+@pytest.mark.skipif(os.getenv("OPENAI_API_KEY") is None, reason='Environment variable "OPENAI_API_KEY" is not set.')
 def test_generate_integrate():
     # execute
     asyncio.run(OpenaiSentenceGenerator().generate())

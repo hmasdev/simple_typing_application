@@ -7,6 +7,7 @@ try:
     import protobuf  # type: ignore # noqa
     import transformers  # type: ignore # noqa
     import sentencepiece  # type: ignore # noqa
+
     HUGGINGFACE_SETUP = True
 except ImportError:
     HUGGINGFACE_SETUP = False
@@ -44,14 +45,13 @@ from simple_typing_application.sentence_generator.static_sentence_generator impo
             StaticSentenceGenerator,
             StaticSentenceGeneratorConfigModel,
         ),
-    ]
+    ],
 )
 def test_select_class_and_config_model(
     sentence_generator_type: ESentenceGeneratorType,
     expected_class: type,
     expected_config_model: type,
 ):
-
     # execute
     sentence_generator_cls, sentence_generator_config_model = _select_class_and_config_model(sentence_generator_type)  # noqa
 
@@ -63,7 +63,7 @@ def test_select_class_and_config_model(
 def test_select_class_and_config_model_raise_value_error():
     # execute
     with pytest.raises(ValueError):
-        _select_class_and_config_model('invalid_key_monitor_type')  # type: ignore  # noqa
+        _select_class_and_config_model("invalid_key_monitor_type")  # type: ignore  # noqa
 
 
 @pytest.mark.parametrize(
@@ -89,7 +89,8 @@ def test_select_class_and_config_model_raise_value_error():
             {},
             StaticSentenceGenerator,
         ),
-    ] + (
+    ]
+    + (
         [
             (
                 ESentenceGeneratorType.HUGGINGFACE,
@@ -102,9 +103,9 @@ def test_select_class_and_config_model_raise_value_error():
                 HuggingfaceSentenceGenerator,
             ),
         ]
-        if HUGGINGFACE_SETUP else
-        []
-    )
+        if HUGGINGFACE_SETUP
+        else []
+    ),
 )
 def test_create_sentence_generator(
     sentence_generator_type: ESentenceGeneratorType,
@@ -112,15 +113,18 @@ def test_create_sentence_generator(
     expected_class: type,
     mocker,
 ):
-
     # mock
     # for OpenaiSentenceGenerator
-    mocker.patch('simple_typing_application.sentence_generator.openai_sentence_generator.ChatOpenAI')  # noqa
+    mocker.patch("simple_typing_application.sentence_generator.openai_sentence_generator.ChatOpenAI")  # noqa
     # for HuggingfaceSentenceGenerator
     if HUGGINGFACE_SETUP:
-        mocker.patch('simple_typing_application.sentence_generator.huggingface_sentence_generator.AutoModelForCausalLM.from_pretrained')  # noqa
-        mocker.patch('simple_typing_application.sentence_generator.huggingface_sentence_generator.AutoTokenizer.from_pretrained')  # noqa
-        mocker.patch('simple_typing_application.sentence_generator.huggingface_sentence_generator.pipeline')  # noqa
+        mocker.patch(
+            "simple_typing_application.sentence_generator.huggingface_sentence_generator.AutoModelForCausalLM.from_pretrained"
+        )  # noqa
+        mocker.patch(
+            "simple_typing_application.sentence_generator.huggingface_sentence_generator.AutoTokenizer.from_pretrained"
+        )  # noqa
+        mocker.patch("simple_typing_application.sentence_generator.huggingface_sentence_generator.pipeline")  # noqa
     # for StaticSentenceGenerator
     # None
 
@@ -135,10 +139,9 @@ def test_create_sentence_generator(
 
 
 def test_create_sentence_generator_raise_import_error(mocker):
-
     # mock
     mocker.patch(
-        'simple_typing_application.sentence_generator.factory._select_class_and_config_model',  # noqa
+        "simple_typing_application.sentence_generator.factory._select_class_and_config_model",  # noqa
         side_effect=NameError,
     )
 
@@ -151,16 +154,15 @@ def test_create_sentence_generator_raise_import_error(mocker):
 
 
 def test_create_sentence_generator_raise_value_error(mocker):
-
     # mock
     mocker.patch(
-        'simple_typing_application.sentence_generator.factory._select_class_and_config_model',  # noqa
+        "simple_typing_application.sentence_generator.factory._select_class_and_config_model",  # noqa
         side_effect=ValueError,
     )
 
     # execute
     with pytest.raises(ValueError):
         create_sentence_generator(
-            'invalid_sentence_generator_type',  # type: ignore
+            "invalid_sentence_generator_type",  # type: ignore
             {},
         )

@@ -9,7 +9,6 @@ from ..const.keys import EMetaKey
 
 
 class SSHKeyboardBasedKeyMonitor(BaseKeyMonitor):
-
     def __init__(
         self,
         logger: Logger = getLogger(__name__),
@@ -27,15 +26,14 @@ class SSHKeyboardBasedKeyMonitor(BaseKeyMonitor):
             kwargs=dict(
                 on_press=self._on_press_callback_wrapper,
                 on_release=self._on_release_callback_wrapper,
-            )
+            ),
         )
         self.__thread.start()
         self.__thread.join()
 
     def stop(self):
-
         if self.__thread is None:
-            self._logger.warning(f'{self.__class__.__name__}() has not been started.')  # noqa
+            self._logger.warning(f"{self.__class__.__name__}() has not been started.")  # noqa
             return
 
         # send stop command
@@ -51,18 +49,18 @@ class SSHKeyboardBasedKeyMonitor(BaseKeyMonitor):
     def _clean_key(self, key: str) -> EMetaKey | str | None:
         if len(key) == 1:
             return key
-        elif key.lower() == 'tab':
+        elif key.lower() == "tab":
             return EMetaKey.TAB
-        elif key.lower() == 'esc':
+        elif key.lower() == "esc":
             return EMetaKey.ESC
-        elif key.lower() == 'space':
-            return ' '
+        elif key.lower() == "space":
+            return " "
         else:
-            self._logger.warning(f'Invalid key: {key}')
+            self._logger.warning(f"Invalid key: {key}")
             return None
 
     def _on_press_callback_wrapper(self, key: str):
-        self._logger.debug(f'pressed key: {key}')
+        self._logger.debug(f"pressed key: {key}")
         # record key
         if len(key) == 1:
             # NOTE: key can be two or more characters when it is a special key like "tab"  # noqa
@@ -71,13 +69,13 @@ class SSHKeyboardBasedKeyMonitor(BaseKeyMonitor):
         key_ = self._clean_key(key)
         # callback
         if self._on_press_callback is None:
-            self._logger.warning(f'{self.__class__.__name__}._on_press_callback is None.')  # noqa
+            self._logger.warning(f"{self.__class__.__name__}._on_press_callback is None.")  # noqa
             return
         return self._on_press_callback(key_)
 
     def _on_release_callback_wrapper(self, key: str):
-        self._logger.debug(f'released key: {key}')
+        self._logger.debug(f"released key: {key}")
         if self._on_release_callback is None:
-            self._logger.warning(f'{self.__class__.__name__}._on_release_callback is None.')  # noqa
+            self._logger.warning(f"{self.__class__.__name__}._on_release_callback is None.")  # noqa
             return
         return self._on_release_callback(self._clean_key(key))

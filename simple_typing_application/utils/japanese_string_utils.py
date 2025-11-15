@@ -6,7 +6,7 @@ from .rerun import rerun_deco
 
 
 def is_hiragana(c: str) -> bool:
-    '''Check if a character is a hiragana.
+    """Check if a character is a hiragana.
 
     Args:
         c (str): a character.
@@ -24,14 +24,14 @@ def is_hiragana(c: str) -> bool:
     False
     >>> is_hiragana('a')
     False
-    '''
+    """
     if len(c) != 1:
-        raise ValueError(f'len(c) must be 1, but {len(c)}')
-    return 'ぁ' <= c <= 'ゔ'
+        raise ValueError(f"len(c) must be 1, but {len(c)}")
+    return "ぁ" <= c <= "ゔ"
 
 
 def delete_space_between_hiraganas(s: str) -> str:
-    '''Delete spaces between hiraganas.
+    """Delete spaces between hiraganas.
 
     Args:
         s (str): a string of hiraganas and spaces.
@@ -43,15 +43,18 @@ def delete_space_between_hiraganas(s: str) -> str:
     >>> s = 'こ んに ち は'
     >>> delete_space_between_hiraganas(s)
     'こんにちは'
-    '''
+    """
     if len(s) <= 2:
         return s
     return (
         s[:1]
-        + ''.join([
-            b for a, b, c in zip(s[:-2], s[1:-1], s[2:])
-            if not (is_hiragana(a) and is_hiragana(c) and b in [' ', '　'])
-        ])
+        + "".join(
+            [
+                b
+                for a, b, c in zip(s[:-2], s[1:-1], s[2:])
+                if not (is_hiragana(a) and is_hiragana(c) and b in [" ", "　"])
+            ]
+        )
         + s[-1:]
     )
 
@@ -60,9 +63,9 @@ def excelapi_kanji2kana(
     text: str,
     transform_katakana_to_hiragana: bool = True,
     max_retry: int = 3,
-    interval_sec: float = 3.,
+    interval_sec: float = 3.0,
 ) -> str:
-    '''Convert kanji to kana using excelapi.org.
+    """Convert kanji to kana using excelapi.org.
 
     Args:
         text (str): a string including kanji.
@@ -79,9 +82,9 @@ def excelapi_kanji2kana(
 
     NOTE:
         ref. https://excelapi.org/docs/language/kanji2kana/
-    '''  # noqa
+    """  # noqa
 
-    url = f'https://api.excelapi.org/language/kanji2kana?text={text}'
+    url = f"https://api.excelapi.org/language/kanji2kana?text={text}"
     response = rerun_deco(
         requests.get,
         max_retry=max_retry,

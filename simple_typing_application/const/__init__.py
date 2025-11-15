@@ -9,7 +9,7 @@ from . import (
 )
 
 
-ASCII_CHARS: str = ''.join(
+ASCII_CHARS: str = "".join(
     chr(i)
     for i in range(0x0021, 0x007E + 1)
     # 0x0021 - 0x007E
@@ -17,7 +17,7 @@ ASCII_CHARS: str = ''.join(
 
 
 __all__ = [
-    'ASCII_CHARS',
+    "ASCII_CHARS",
     color.__name__,
     hiragana_katakana_map.__name__,
     hiragana_romaji_map.__name__,

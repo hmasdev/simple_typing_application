@@ -16,33 +16,29 @@ from ..utils.stopwatch import stopwatch
 
 
 class _OutputSchema(BaseModel):
-    text: str = Field(..., description='生成された一文')
+    text: str = Field(..., description="生成された一文")
     text_hiragana_alphabet_symbol: str = Field(  # noqa
-        ..., description='一文をひらがな、アルファベット、記号のみに変換したもの'  # noqa
+        ...,
+        description="一文をひらがな、アルファベット、記号のみに変換したもの",  # noqa
     )
 
     def build_typing_target(self) -> TypingTargetModel:
         dic: dict[str, str | list[list[str]]] = {}
         # assign values
-        dic['text'] = self.text
+        dic["text"] = self.text
         # delete space between hiraganas
-        dic['text_hiragana_alphabet_symbol'] = delete_space_between_hiraganas(
-            self.text_hiragana_alphabet_symbol
-        )
+        dic["text_hiragana_alphabet_symbol"] = delete_space_between_hiraganas(self.text_hiragana_alphabet_symbol)
         # create typing target
-        splitted = split_hiraganas_alphabets_symbols(
-            self.text_hiragana_alphabet_symbol
-        )
-        dic['typing_target'] = splitted_hiraganas_alphabets_symbols_to_typing_target(splitted)  # noqa
+        splitted = split_hiraganas_alphabets_symbols(self.text_hiragana_alphabet_symbol)
+        dic["typing_target"] = splitted_hiraganas_alphabets_symbols_to_typing_target(splitted)  # noqa
         return TypingTargetModel(**dic)
 
 
 class OpenaiSentenceGenerator(BaseSentenceGenerator):
-
     def __init__(
         self,
-        model: str = 'gpt-5-nano',
-        temperature: float = .7,
+        model: str = "gpt-5-nano",
+        temperature: float = 0.7,
         openai_api_key: SecretStr | str | None = None,
         memory_size: int = 5,
         max_retry: int = 5,
@@ -73,17 +69,13 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
 
     def _retry_callback(self) -> None:
         if self._memory:
-            self._logger.info(
-                'reducing memory size: '
-                f'{len(self._memory)} -> {len(self._memory) - 1}'
-            )
+            self._logger.info(f"reducing memory size: {len(self._memory)} -> {len(self._memory) - 1}")
             del self._memory[0]
 
     async def generate(
         self,
         callback: Callable[[TypingTargetModel], TypingTargetModel] | None = None,  # noqa
     ) -> TypingTargetModel:
-
         # invoke agent
         messages = [
             {
@@ -109,9 +101,7 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
             self._memory.pop(0)
 
         # build typing target
-        cleaned_ret: TypingTargetModel = (
-            output.build_typing_target()
-        )
+        cleaned_ret: TypingTargetModel = output.build_typing_target()
 
         if callback is None:
             return cleaned_ret
@@ -121,11 +111,8 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
     @property
     def _system_prompt(self) -> str:
         key = dt.now().strftime("%Y/%m/%d %H:%M:%S.%f")[::-1]
-        past_outputs = '\n'.join([
-            '- `' + m.model_dump_json(indent=None) + '`'
-            for m in self._memory
-        ])
-        return f'''あなたは非常に優秀な日本語の短文作家です。
+        past_outputs = "\n".join(["- `" + m.model_dump_json(indent=None) + "`" for m in self._memory])
+        return f"""あなたは非常に優秀な日本語の短文作家です。
 あなたが素晴らしいと思う 20 文字以上の日本語の一文を下記の手順で step-by-step に生成してください。
 
 Step 1. 20文字以上の日本語の一文を生成する。
@@ -152,8 +139,8 @@ Step 2. Step 1 で生成した一文に含まれる漢字もしくはカタカ�
 {past_outputs}
 
 乱数シード：{key}
-'''  # noqa
+"""  # noqa
 
     @property
     def _user_prompt(self) -> str:
-        return '生成してください。'
+        return "生成してください。"

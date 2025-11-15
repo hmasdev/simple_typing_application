@@ -43,9 +43,9 @@ KEY_STR_MAP: tuple[tuple[str, EMetaKey | str | None], ...] = (  # noqa
     ("enter", None),
     ("space", " "),
     ("tab", EMetaKey.TAB),
-    ('a', 'a'),
-    ('A', 'A'),
-    ('#', '#'),
+    ("a", "a"),
+    ("A", "A"),
+    ("#", "#"),
 )
 
 
@@ -56,14 +56,14 @@ def test_inheritance():
 def test__reset_keys_queue():
     # preparation
     key_monitor = SSHKeyboardBasedKeyMonitor()
-    key_monitor._SSHKeyboardBasedKeyMonitor__keys_queue.append('a')  # type: ignore  # noqa
-    assert len(key_monitor._SSHKeyboardBasedKeyMonitor__keys_queue) > 0   # type: ignore  # noqa
+    key_monitor._SSHKeyboardBasedKeyMonitor__keys_queue.append("a")  # type: ignore  # noqa
+    assert len(key_monitor._SSHKeyboardBasedKeyMonitor__keys_queue) > 0  # type: ignore  # noqa
 
     # execute
     key_monitor._reset_keys_queue()
 
     # assert
-    assert len(key_monitor._SSHKeyboardBasedKeyMonitor__keys_queue) == 0   # type: ignore  # noqa
+    assert len(key_monitor._SSHKeyboardBasedKeyMonitor__keys_queue) == 0  # type: ignore  # noqa
 
 
 @pytest.mark.parametrize(
@@ -84,12 +84,7 @@ def test__clean_key(
     "key, intemediate_expected",
     list(KEY_STR_MAP),
 )
-def test__on_press_callback_wrapper(
-    key: str,
-    intemediate_expected: EMetaKey | str | None,
-    mocker
-):
-
+def test__on_press_callback_wrapper(key: str, intemediate_expected: EMetaKey | str | None, mocker):
     # mock
     mock_callback = mocker.MagicMock()
 
@@ -108,12 +103,7 @@ def test__on_press_callback_wrapper(
     "key, intemediate_expected",
     list(KEY_STR_MAP),
 )
-def test__on_release_callback_wrapper(
-    key: str,
-    intemediate_expected: EMetaKey | str | None,
-    mocker
-):
-
+def test__on_release_callback_wrapper(key: str, intemediate_expected: EMetaKey | str | None, mocker):
     # mock
     mock_callback = mocker.MagicMock()
 
@@ -129,15 +119,14 @@ def test__on_release_callback_wrapper(
 
 
 def test_start(mocker):
-
     # mock
     mock_thread = mocker.MagicMock(spec=Thread)
     mock_Thread = mocker.patch(
-        'simple_typing_application.key_monitor.sshkeyboard.Thread',
+        "simple_typing_application.key_monitor.sshkeyboard.Thread",
         return_value=mock_thread,
     )
     mock_listen_keyboard = mocker.patch(
-        'simple_typing_application.key_monitor.sshkeyboard.listen_keyboard',
+        "simple_typing_application.key_monitor.sshkeyboard.listen_keyboard",
     )
 
     # preparation
@@ -152,7 +141,7 @@ def test_start(mocker):
         kwargs=dict(
             on_press=key_monitor._on_press_callback_wrapper,
             on_release=key_monitor._on_release_callback_wrapper,
-        )
+        ),
     )
     mock_thread.start.assert_called_once()
     mock_thread.join.assert_called_once()
@@ -164,15 +153,14 @@ def test_stop(mocker):
     # mock
     mock_thread = mocker.MagicMock(spec=Thread)
     mock_Thread = mocker.patch(
-        'simple_typing_application.key_monitor.sshkeyboard.Thread',
+        "simple_typing_application.key_monitor.sshkeyboard.Thread",
         return_value=mock_thread,
     )
     mock_listen_keyboard = mocker.patch(
-        'simple_typing_application.key_monitor.sshkeyboard.listen_keyboard',
+        "simple_typing_application.key_monitor.sshkeyboard.listen_keyboard",
     )
     mock_stop_listening = mocker.patch(
-        'simple_typing_application.key_monitor.sshkeyboard.stop_listening',
-        side_effect=stop_listening
+        "simple_typing_application.key_monitor.sshkeyboard.stop_listening", side_effect=stop_listening
     )
 
     # preparation
@@ -181,7 +169,7 @@ def test_stop(mocker):
     # execute
     key_monitor.start()
     # emulate send 'a' key
-    key_monitor._SSHKeyboardBasedKeyMonitor__keys_queue.append('a')  # type: ignore  # noqa
+    key_monitor._SSHKeyboardBasedKeyMonitor__keys_queue.append("a")  # type: ignore  # noqa
     mock_stop_listening.assert_not_called()
     key_monitor.stop()
 
@@ -191,7 +179,7 @@ def test_stop(mocker):
         kwargs=dict(
             on_press=key_monitor._on_press_callback_wrapper,
             on_release=key_monitor._on_release_callback_wrapper,
-        )
+        ),
     )
     mock_thread.start.assert_called_once()
     mock_thread.join.assert_called_once()

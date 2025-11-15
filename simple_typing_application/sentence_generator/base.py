@@ -4,7 +4,6 @@ from ..models.typing_target_model import TypingTargetModel
 
 
 class BaseSentenceGenerator(ABC):
-
     @abstractmethod
     async def generate(
         self,
