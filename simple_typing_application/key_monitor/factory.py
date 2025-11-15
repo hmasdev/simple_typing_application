@@ -37,7 +37,10 @@ def create_key_monitor(
 
     # create key monitor
     logger.debug(f"create {key_monitor_cls.__name__}")
-    key_monitor_config: BaseKeyMonitorConfigModel = key_monitor_config_model(**config.model_dump())  # noqa
+    if isinstance(config, key_monitor_config_model):
+        key_monitor_config: BaseKeyMonitorConfigModel = config
+    else:
+        key_monitor_config: BaseKeyMonitorConfigModel = key_monitor_config_model(**config.model_dump())  # noqa
     key_monitor: BaseKeyMonitor = key_monitor_cls(**key_monitor_config.model_dump())  # type: ignore # noqa
 
     return key_monitor
