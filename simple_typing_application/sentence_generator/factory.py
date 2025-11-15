@@ -50,7 +50,10 @@ def create_sentence_generator(
 
     # create sentence generator
     logger.debug(f"create {sentence_generator_cls.__name__}")
-    sentence_generator_config: BaseSentenceGeneratorConfigModel = sentence_generator_config_model(**config.model_dump())  # noqa
+    if isinstance(config, sentence_generator_config_model):
+        sentence_generator_config: BaseSentenceGeneratorConfigModel = config
+    else:
+        sentence_generator_config: BaseSentenceGeneratorConfigModel = sentence_generator_config_model(**config.model_dump())  # noqa
     sentence_generator: BaseSentenceGenerator = sentence_generator_cls(**sentence_generator_config.model_dump())  # type: ignore # noqa
 
     return sentence_generator
