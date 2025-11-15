@@ -14,8 +14,7 @@ from ..utils.japanese_string_utils import excelapi_kanji2kana
 
 
 class StaticSentenceGenerator(BaseSentenceGenerator):
-
-    __WAIT_TIME_SEC: float = 1.
+    __WAIT_TIME_SEC: float = 1.0
 
     def __init__(
         self,
@@ -24,8 +23,7 @@ class StaticSentenceGenerator(BaseSentenceGenerator):
         logger: Logger = getLogger(__name__),
     ) -> None:
         self._text_kana_pairs = tuple(
-            (k, v if v is not None else self._kanji2kana(k))
-            for k, v in text_kana_map.items()
+            (k, v if v is not None else self._kanji2kana(k)) for k, v in text_kana_map.items()
         )
         self._is_random: bool = is_random
         self._index: int = -1
@@ -35,17 +33,16 @@ class StaticSentenceGenerator(BaseSentenceGenerator):
         self,
         callback: Callable[[TypingTargetModel], TypingTargetModel] | None = None,  # noqa
     ) -> TypingTargetModel:
-
         # generate
         generated_text, generated_kana = self._get_next()
-        self._logger.debug(f'generated text: {generated_text}')
-        self._logger.debug(f'generated kana: {generated_kana}')
+        self._logger.debug(f"generated text: {generated_text}")
+        self._logger.debug(f"generated kana: {generated_kana}")
 
         # postprocess
         splitted = split_hiraganas_alphabets_symbols(generated_kana)
-        self._logger.debug(f'splitted pattern: {splitted}')
+        self._logger.debug(f"splitted pattern: {splitted}")
         typing_target = splitted_hiraganas_alphabets_symbols_to_typing_target(splitted)  # noqa
-        self._logger.debug(f'typing target: {typing_target}')
+        self._logger.debug(f"typing target: {typing_target}")
 
         # callback
         if callback is None:
@@ -55,14 +52,15 @@ class StaticSentenceGenerator(BaseSentenceGenerator):
                 typing_target=typing_target,
             )
         else:
-            return callback(TypingTargetModel(
-                text=generated_text,
-                text_hiragana_alphabet_symbol=generated_kana,
-                typing_target=typing_target,
-            ))
+            return callback(
+                TypingTargetModel(
+                    text=generated_text,
+                    text_hiragana_alphabet_symbol=generated_kana,
+                    typing_target=typing_target,
+                )
+            )
 
     def _get_next(self) -> tuple[str, str]:
-
         # get index
         if self._is_random:
             self._index = random.randint(0, len(self._text_kana_pairs) - 1)

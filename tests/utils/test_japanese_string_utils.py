@@ -18,8 +18,8 @@ from simple_typing_application.utils.rerun import MaxRetryError
         ("あ", True),
         ("い", True),
         ("ゔ", True),
-        (chr(ord('ぁ')-1), False),
-        (chr(ord('ゔ')+1), False),
+        (chr(ord("ぁ") - 1), False),
+        (chr(ord("ゔ") + 1), False),
         ("ア", False),
         ("a", False),
         (")", False),
@@ -65,13 +65,7 @@ def test_delete_space_between_hiraganas(
         ("これは日本語デス。", False, "これはにほんごデス。"),
     ],
 )
-def test_excelapi_kanji2kana(
-    input_text: str,
-    transform_katakana_to_hiragana: bool,
-    expected: str,
-    mocker
-):
-
+def test_excelapi_kanji2kana(input_text: str, transform_katakana_to_hiragana: bool, expected: str, mocker):
     # mock
     mock_response = mocker.MagicMock(spec=Response)
     mock_response.text = expected
@@ -83,17 +77,13 @@ def test_excelapi_kanji2kana(
     )
 
     # execute
-    actual: str = excelapi_kanji2kana(
-        input_text,
-        transform_katakana_to_hiragana=transform_katakana_to_hiragana
-    )
+    actual: str = excelapi_kanji2kana(input_text, transform_katakana_to_hiragana=transform_katakana_to_hiragana)
 
     # assert
     assert actual == expected
 
 
 def test_excelapi_kanji2kana_request_get_raises_1error(mocker):
-
     # preparation
     input_text: str = "これは日本語デス。"
     expected: str = "これはにほんごです。"
@@ -128,7 +118,6 @@ def test_excelapi_kanji2kana_request_get_raises_1error(mocker):
 
 
 def test_excelapi_kanji2kana_request_get_raises_error_always(mocker):
-
     # preparation
     input_text: str = "これは日本語です。"
     max_retry: int = 3
@@ -146,7 +135,7 @@ def test_excelapi_kanji2kana_request_get_raises_error_always(mocker):
 
 
 @pytest.mark.parametrize(
-    'status_code',
+    "status_code",
     [
         400,
         500,
@@ -177,7 +166,6 @@ def test_excelapi_kanji2kana_invalid_status_code(
 
 @pytest.mark.integrate
 def test_excelapi_kanji2kana_integrate(mocker):
-
     # preparation
     input_text: str = "これは日本語デス。ABC abc"
     expected: str = "これはにほんごです。ABC abc"

@@ -1,13 +1,9 @@
 import asyncio
 import pytest
-from simple_typing_application.utils.rerun import (
-    rerun_deco,
-    MaxRetryError
-)
+from simple_typing_application.utils.rerun import rerun_deco, MaxRetryError
 
 
 def test_rerun_deco():
-
     # preparation
     execution_ctr: int = 0
     expected: int = 3
@@ -55,7 +51,6 @@ def test_rerun_deco():
 
 
 def test_rerun_deco_async():
-
     # preparation
     execution_ctr: int = 0
     expected: int = 3
@@ -103,7 +98,6 @@ def test_rerun_deco_async():
 
 
 def test_rerun_deco_with_callback():
-
     # preparation
     execution_ctr: int = 0
     expected: int = 3
@@ -130,7 +124,6 @@ def test_rerun_deco_with_callback():
 
 
 def test_rerun_deco_async_with_callback():
-
     # preparation
     execution_ctr: int = 0
     expected: int = 3

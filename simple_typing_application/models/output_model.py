@@ -6,7 +6,6 @@ from .record_model import RecordModel
 
 
 class OutputModel(BaseModel):
-
     timestamp: datetime.datetime
     typing_target: TypingTargetModel
     records: list[RecordModel]

@@ -3,7 +3,6 @@ from ..const.color import EColor
 
 
 class BaseUserInterface(ABC):
-
     @abstractmethod
     def show_typing_target(
         self,

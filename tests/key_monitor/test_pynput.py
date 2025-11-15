@@ -9,7 +9,7 @@ from simple_typing_application.key_monitor.pynput import PynputBasedKeyMonitor
 PYNPUT_KEY_MAP: tuple[tuple[keyboard.Key | keyboard.KeyCode | None, EMetaKey | str | None], ...] = (  # noqa
     (keyboard.Key.esc, EMetaKey.ESC),
     (keyboard.Key.tab, EMetaKey.TAB),
-    (keyboard.Key.space, ' '),
+    (keyboard.Key.space, " "),
     (keyboard.Key.ctrl, None),
     (keyboard.Key.alt, None),
     (keyboard.Key.cmd, None),
@@ -27,9 +27,9 @@ PYNPUT_KEY_MAP: tuple[tuple[keyboard.Key | keyboard.KeyCode | None, EMetaKey | s
     (keyboard.Key.page_up, None),
     (keyboard.Key.page_down, None),
     (keyboard.Key.insert, None),
-    (keyboard.KeyCode.from_char('a'), 'a'),
-    (keyboard.KeyCode.from_char('A'), 'A'),
-    (keyboard.KeyCode.from_char('#'), '#'),
+    (keyboard.KeyCode.from_char("a"), "a"),
+    (keyboard.KeyCode.from_char("A"), "A"),
+    (keyboard.KeyCode.from_char("#"), "#"),
     (None, None),
 )
 
@@ -57,11 +57,8 @@ def test__clean_key(
     list(PYNPUT_KEY_MAP),
 )
 def test__on_press_callback_wrapper(
-    key: keyboard.Key | keyboard.KeyCode,
-    intemediate_expected: EMetaKey | str | None,
-    mocker
+    key: keyboard.Key | keyboard.KeyCode, intemediate_expected: EMetaKey | str | None, mocker
 ):
-
     # mock
     mock_callback = mocker.MagicMock()
 
@@ -81,11 +78,8 @@ def test__on_press_callback_wrapper(
     list(PYNPUT_KEY_MAP),
 )
 def test__on_release_callback_wrapper(
-    key: keyboard.Key | keyboard.KeyCode,
-    intemediate_expected: EMetaKey | str | None,
-    mocker
+    key: keyboard.Key | keyboard.KeyCode, intemediate_expected: EMetaKey | str | None, mocker
 ):
-
     # mock
     mock_callback = mocker.MagicMock()
 
@@ -101,13 +95,9 @@ def test__on_release_callback_wrapper(
 
 
 def test_start(mocker):
-
     # mock
     mock_keyboard_listener = mocker.MagicMock(spec=keyboard.Listener)
-    mocker.patch(
-        'simple_typing_application.key_monitor.pynput.keyboard.Listener',
-        return_value=mock_keyboard_listener
-    )
+    mocker.patch("simple_typing_application.key_monitor.pynput.keyboard.Listener", return_value=mock_keyboard_listener)
 
     # preparation
     key_monitor = PynputBasedKeyMonitor()
@@ -121,13 +111,9 @@ def test_start(mocker):
 
 
 def test_stop(mocker):
-
     # mock
     mock_keyboard_listener = mocker.MagicMock(spec=keyboard.Listener)
-    mocker.patch(
-        'simple_typing_application.key_monitor.pynput.keyboard.Listener',
-        return_value=mock_keyboard_listener
-    )
+    mocker.patch("simple_typing_application.key_monitor.pynput.keyboard.Listener", return_value=mock_keyboard_listener)
 
     # preparation
     key_monitor = PynputBasedKeyMonitor()
@@ -143,13 +129,9 @@ def test_stop(mocker):
 
 
 def test_stop_before_start(mocker, caplog):
-
     # mock
     mock_keyboard_listener = mocker.MagicMock(spec=keyboard.Listener)
-    mocker.patch(
-        'simple_typing_application.key_monitor.pynput.keyboard.Listener',
-        return_value=mock_keyboard_listener
-    )
+    mocker.patch("simple_typing_application.key_monitor.pynput.keyboard.Listener", return_value=mock_keyboard_listener)
 
     # preparation
     key_monitor = PynputBasedKeyMonitor()
@@ -159,5 +141,5 @@ def test_stop_before_start(mocker, caplog):
 
     # assert
     # Test whether the warning message is output.
-    caplog.records[0].message == f'{key_monitor.__class__.__name__}() has not been started.'  # noqa
-    caplog.records[0].levelname == 'WARNING'
+    caplog.records[0].message == f"{key_monitor.__class__.__name__}() has not been started."  # noqa
+    caplog.records[0].levelname == "WARNING"

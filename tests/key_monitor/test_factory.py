@@ -7,10 +7,7 @@ from simple_typing_application.models.config_models.key_monitor_config_model imp
     PynputBasedKeyMonitorConfigModel,
 )
 from simple_typing_application.key_monitor.sshkeyboard import SSHKeyboardBasedKeyMonitor  # noqa
-from simple_typing_application.key_monitor.factory import (
-    create_key_monitor,
-    _select_class_and_config_model
-)
+from simple_typing_application.key_monitor.factory import create_key_monitor, _select_class_and_config_model
 from simple_typing_application.key_monitor.pynput import PynputBasedKeyMonitor  # noqa
 
 
@@ -19,14 +16,13 @@ from simple_typing_application.key_monitor.pynput import PynputBasedKeyMonitor  
     [
         (EKeyMonitorType.PYNPUT, PynputBasedKeyMonitor, PynputBasedKeyMonitorConfigModel),  # noqa
         (EKeyMonitorType.SSHKEYBOARD, SSHKeyboardBasedKeyMonitor, SSHKeyboardBasedKeyMonitorConfigModel),  # noqa
-    ]
+    ],
 )
 def test_select_class_and_config_model(
     key_monitor_type: EKeyMonitorType,
     expected_class: type,
     expected_config_model: type,
 ):
-
     # execute
     key_monitor_cls, key_monitor_config_model = _select_class_and_config_model(key_monitor_type)  # noqa
 
@@ -38,7 +34,7 @@ def test_select_class_and_config_model(
 def test_select_class_and_config_model_raise_value_error():
     # execute
     with pytest.raises(ValueError):
-        _select_class_and_config_model('invalid_key_monitor_type')  # type: ignore  # noqa
+        _select_class_and_config_model("invalid_key_monitor_type")  # type: ignore  # noqa
 
 
 @pytest.mark.parametrize(
@@ -55,7 +51,7 @@ def test_select_class_and_config_model_raise_value_error():
             PynputBasedKeyMonitor,
         ),
         (EKeyMonitorType.SSHKEYBOARD, SSHKeyboardBasedKeyMonitorConfigModel().model_dump(), SSHKeyboardBasedKeyMonitor),  # noqa
-    ]
+    ],
 )
 def test_create_key_monitor(
     key_monitor_type: EKeyMonitorType,
@@ -63,7 +59,6 @@ def test_create_key_monitor(
     expected_class: type,
     mocker,
 ):
-
     # mock
     # for PynputBasedKeyMonitor
     # None
@@ -79,10 +74,9 @@ def test_create_key_monitor(
 
 
 def test_create_key_monitor_raise_import_error(mocker):
-
     # mock
     mocker.patch(
-        'simple_typing_application.key_monitor.factory._select_class_and_config_model',  # noqa
+        "simple_typing_application.key_monitor.factory._select_class_and_config_model",  # noqa
         side_effect=NameError,
     )
 
@@ -95,16 +89,15 @@ def test_create_key_monitor_raise_import_error(mocker):
 
 
 def test_create_key_monitor_raise_value_error(mocker):
-
     # mock
     mocker.patch(
-        'simple_typing_application.key_monitor.factory._select_class_and_config_model',  # noqa
+        "simple_typing_application.key_monitor.factory._select_class_and_config_model",  # noqa
         side_effect=ValueError,
     )
 
     # execute
     with pytest.raises(ValueError):
         create_key_monitor(
-            'invalid_key_monitor_type',  # type: ignore
+            "invalid_key_monitor_type",  # type: ignore
             {},
         )

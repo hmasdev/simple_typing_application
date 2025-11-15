@@ -13,9 +13,8 @@ from simple_typing_application.config import load_config
 
 
 def test_load_config_json(mocker):
-
     # preparation
-    path = 'dummy.json'
+    path = "dummy.json"
     expected = ConfigModel(
         **{
             "sentence_generator_type": "OPENAI",
@@ -24,16 +23,16 @@ def test_load_config_json(mocker):
                 "temperature": 0.7,
                 "openai_api_key": "HERE_IS_YOUR_API_KEY",
                 "memory_size": 1,
-                "max_retry": 5
+                "max_retry": 5,
             },
             "user_interface_type": "CONSOLE",
             "user_interface_config": {},
-            "record_direc": "./record"
+            "record_direc": "./record",
         }
     )
     # mock
     mocker.patch(
-        'simple_typing_application.config.open',
+        "simple_typing_application.config.open",
         mock_open(read_data=expected.model_dump_json(indent=4)),
     )
 
@@ -45,15 +44,14 @@ def test_load_config_json(mocker):
 
 
 def test_load_config_json_not_found(mocker):
-
     # mock
     mocker.patch(
-        'simple_typing_application.config.open',
+        "simple_typing_application.config.open",
         side_effect=FileNotFoundError,
     )
 
     # preparation
-    path = 'does_not_exist.json'
+    path = "does_not_exist.json"
     expected = ConfigModel()
 
     # run
@@ -65,9 +63,8 @@ def test_load_config_json_not_found(mocker):
 
 
 def test_load_config_yaml(mocker):
-
     # preparation
-    path = 'dummy.yaml'
+    path = "dummy.yaml"
 
     # run
     with pytest.raises(NotImplementedError):
@@ -75,9 +72,8 @@ def test_load_config_yaml(mocker):
 
 
 def test_load_config_unsupported_file_type(mocker):
-
     # preparation
-    path = 'dummy.txt'
+    path = "dummy.txt"
 
     # run
     with pytest.raises(ValueError):

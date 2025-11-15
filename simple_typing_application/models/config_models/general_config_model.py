@@ -11,12 +11,16 @@ from ...const.user_interface import EUserInterfaceType
 
 class ConfigModel(BaseModel):
     sentence_generator_type: ESentenceGeneratorType = ESentenceGeneratorType.OPENAI  # noqa
-    sentence_generator_config: dict[str, str | float | int | bool | None | dict | list] = BaseSentenceGeneratorConfigModel().model_dump()  # noqa
+    sentence_generator_config: dict[str, str | float | int | bool | None | dict | list] = (
+        BaseSentenceGeneratorConfigModel().model_dump()
+    )  # noqa
 
     user_interface_type: EUserInterfaceType = EUserInterfaceType.CONSOLE
-    user_interface_config: dict[str, str | float | int | None | dict | list] = BaseUserInterfaceConfigModel().model_dump()  # noqa
+    user_interface_config: dict[str, str | float | int | None | dict | list] = (
+        BaseUserInterfaceConfigModel().model_dump()
+    )  # noqa
 
     key_monitor_type: EKeyMonitorType = EKeyMonitorType.PYNPUT
     key_monitor_config: dict[str, str | float | int | None | dict | list] = BaseKeyMonitorConfigModel().model_dump()  # noqa
 
-    record_direc: str = './record'
+    record_direc: str = "./record"

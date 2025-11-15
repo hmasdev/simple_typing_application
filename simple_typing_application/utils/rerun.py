@@ -6,7 +6,7 @@ from typing import Any, Callable
 
 
 class MaxRetryError(Exception):
-    def __init__(self, message: str = ''):
+    def __init__(self, message: str = ""):
         super().__init__(message)
 
 
@@ -16,7 +16,7 @@ def rerun_deco(
     callback: Callable[..., None] | None = None,
     logger: Logger = getLogger(__name__),
 ) -> Callable[..., Any]:
-    '''Decorator to rerun a function when it raises an exception.
+    """Decorator to rerun a function when it raises an exception.
 
     Args:
         func (Callable[..., Any], optional): function to be decorated. Defaults to None.
@@ -32,7 +32,7 @@ def rerun_deco(
 
     Note:
         If func is None, return a decorator. Otherwise, return a wrapper.
-    '''  # noqa
+    """  # noqa
 
     # if func is None, return a decorator
     if func is None:
@@ -45,30 +45,36 @@ def rerun_deco(
 
     # if func is not None, return a wrapper
     if asyncio.iscoroutinefunction(func):
+
         @wraps(func)
         async def wrapped(*args, **kwargs):
             for i in range(max_retry):
                 try:
                     return await func(*args, **kwargs)
                 except Exception as e:
-                    if hasattr(func, '__name__'):
-                        logger.warning(f'[{i+1}/{max_retry}] failed to run {func.__name__}(): {e.__class__.__name__}({e})')  # noqa
+                    if hasattr(func, "__name__"):
+                        logger.warning(
+                            f"[{i + 1}/{max_retry}] failed to run {func.__name__}(): {e.__class__.__name__}({e})"
+                        )  # noqa
                     else:
-                        logger.warning(f'[{i+1}/{max_retry}] failed to run an unnamed function: {e.__class__.__name__}({e})')  # noqa
+                        logger.warning(
+                            f"[{i + 1}/{max_retry}] failed to run an unnamed function: {e.__class__.__name__}({e})"
+                        )  # noqa
                     if callback is not None:
                         callback(*args, **kwargs)
             raise MaxRetryError()
     else:
+
         @wraps(func)
         def wrapped(*args, **kwargs):
             for i in range(max_retry):
                 try:
                     return func(*args, **kwargs)
                 except Exception as e:
-                    if hasattr(func, '__name__'):
-                        logger.warning(f'failed to run {func.__name__}(): {e.__class__.__name__}({e})')  # noqa
+                    if hasattr(func, "__name__"):
+                        logger.warning(f"failed to run {func.__name__}(): {e.__class__.__name__}({e})")  # noqa
                     else:
-                        logger.warning(f'failed to run an unnamed function: {e.__class__.__name__}({e})')  # noqa
+                        logger.warning(f"failed to run an unnamed function: {e.__class__.__name__}({e})")  # noqa
                     if callback is not None:
                         callback(*args, **kwargs)
             raise MaxRetryError()

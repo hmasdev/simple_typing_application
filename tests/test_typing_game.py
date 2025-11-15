@@ -21,140 +21,139 @@ from simple_typing_application.ui.base import BaseUserInterface
 FIXED_TIMESTAMP: dt = dt(2021, 1, 1, 0, 0, 0, 0)
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def typing_game_with_mocks(mocker) -> tuple[TypingGame, dict[str, mock.MagicMock]]:  # type: ignore # noqa
-
     # create mocks
     mocks = dict(
         mock_key_monitor=mocker.MagicMock(spec=BaseKeyMonitor),
         mock_sentence_generator=mocker.MagicMock(spec=BaseSentenceGenerator),
         mock_user_interface=mocker.MagicMock(spec=BaseUserInterface),
-        mock_os_make_dirs=mocker.patch('simple_typing_application.typing_game.os.makedirs'),  # noqa
-        mock_dt=mocker.patch('simple_typing_application.typing_game.dt'),
-        mock_exit=mocker.patch('builtins.exit'),
-        mock_record_direc='./dummy',
-        mock_open=mocker.patch('builtins.open', return_value=None),  # noqa
-        mock_json_dump=mocker.patch('simple_typing_application.typing_game.json.dump'),  # noqa
+        mock_os_make_dirs=mocker.patch("simple_typing_application.typing_game.os.makedirs"),  # noqa
+        mock_dt=mocker.patch("simple_typing_application.typing_game.dt"),
+        mock_exit=mocker.patch("builtins.exit"),
+        mock_record_direc="./dummy",
+        mock_open=mocker.patch("builtins.open", return_value=None),  # noqa
+        mock_json_dump=mocker.patch("simple_typing_application.typing_game.json.dump"),  # noqa
     )
-    mocks['mock_dt'].now = mocker.Mock(return_value=FIXED_TIMESTAMP)
+    mocks["mock_dt"].now = mocker.Mock(return_value=FIXED_TIMESTAMP)
 
     # create typing game
     typing_game = TypingGame(
-        sentence_generator=mocks['mock_sentence_generator'],
-        key_monitor=mocks['mock_key_monitor'],
-        ui=mocks['mock_user_interface'],
-        record_direc=mocks['mock_record_direc'],
+        sentence_generator=mocks["mock_sentence_generator"],
+        key_monitor=mocks["mock_key_monitor"],
+        ui=mocks["mock_user_interface"],
+        record_direc=mocks["mock_record_direc"],
     )
 
     yield typing_game, mocks
 
 
 @pytest.mark.parametrize(
-    'char, typing_target, expected',
+    "char, typing_target, expected",
     [
         # Alphabet Cases (True)
         (
-            'a',
+            "a",
             TypingTargetModel(
-                text='abc',  # dummy
-                text_hiragana_alphabet_symbol='abc',  # dummy
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",  # dummy
+                text_hiragana_alphabet_symbol="abc",  # dummy
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             (
                 True,
                 TypingTargetModel(
-                    text='abc',  # dummy
-                    text_hiragana_alphabet_symbol='abc',  # dummy
-                    typing_target=[['b'], ['c']],
+                    text="abc",  # dummy
+                    text_hiragana_alphabet_symbol="abc",  # dummy
+                    typing_target=[["b"], ["c"]],
                 ),
             ),
         ),
         # Alphabet Cases (Single, True)
         (
-            'a',
+            "a",
             TypingTargetModel(
-                text='a',  # dummy
-                text_hiragana_alphabet_symbol='a',  # dummy
-                typing_target=[['a']],
+                text="a",  # dummy
+                text_hiragana_alphabet_symbol="a",  # dummy
+                typing_target=[["a"]],
             ),
             (
                 True,
                 TypingTargetModel(
-                    text='a',  # dummy
-                    text_hiragana_alphabet_symbol='a',  # dummy
+                    text="a",  # dummy
+                    text_hiragana_alphabet_symbol="a",  # dummy
                     typing_target=[],
                 ),
             ),
         ),
         # Alphabet Cases (False)
         (
-            'z',
+            "z",
             TypingTargetModel(
-                text='abc',  # dummy
-                text_hiragana_alphabet_symbol='abc',  # dummy
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",  # dummy
+                text_hiragana_alphabet_symbol="abc",  # dummy
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             (
                 False,
                 TypingTargetModel(
-                    text='abc',  # dummy
-                    text_hiragana_alphabet_symbol='abc',  # dummy
-                    typing_target=[['a'], ['b'], ['c']],
+                    text="abc",  # dummy
+                    text_hiragana_alphabet_symbol="abc",  # dummy
+                    typing_target=[["a"], ["b"], ["c"]],
                 ),
             ),
         ),
         # Hiragana Cases (True 1)
         (
-            't',
+            "t",
             TypingTargetModel(
-                text='ち',  # dummy
-                text_hiragana_alphabet_symbol='ち',  # dummy
+                text="ち",  # dummy
+                text_hiragana_alphabet_symbol="ち",  # dummy
                 typing_target=[["ti", "chi"]],
             ),
             (
                 True,
                 TypingTargetModel(
-                    text='ち',  # dummy
-                    text_hiragana_alphabet_symbol='ち',  # dummy
+                    text="ち",  # dummy
+                    text_hiragana_alphabet_symbol="ち",  # dummy
                     typing_target=[["i"]],
                 ),
             ),
         ),
         # Hiragana Cases (True 2)
         (
-            'c',
+            "c",
             TypingTargetModel(
-                text='ち',  # dummy
-                text_hiragana_alphabet_symbol='ち',  # dummy
+                text="ち",  # dummy
+                text_hiragana_alphabet_symbol="ち",  # dummy
                 typing_target=[["ti", "chi"]],
             ),
             (
                 True,
                 TypingTargetModel(
-                    text='ち',  # dummy
-                    text_hiragana_alphabet_symbol='ち',  # dummy
+                    text="ち",  # dummy
+                    text_hiragana_alphabet_symbol="ち",  # dummy
                     typing_target=[["hi"]],
                 ),
             ),
         ),
         # Hiragana Cases (False)
         (
-            'x',
+            "x",
             TypingTargetModel(
-                text='ち',  # dummy
-                text_hiragana_alphabet_symbol='ち',  # dummy
+                text="ち",  # dummy
+                text_hiragana_alphabet_symbol="ち",  # dummy
                 typing_target=[["ti", "chi"]],
             ),
             (
                 False,
                 TypingTargetModel(
-                    text='ち',  # dummy
-                    text_hiragana_alphabet_symbol='ち',  # dummy
+                    text="ち",  # dummy
+                    text_hiragana_alphabet_symbol="ち",  # dummy
                     typing_target=[["ti", "chi"]],
                 ),
             ),
         ),
-    ]
+    ],
 )
 def test_input_char_is_correct(
     char: str,
@@ -167,25 +166,25 @@ def test_input_char_is_correct(
 
 
 @pytest.mark.parametrize(
-    'typing_target, expected',
+    "typing_target, expected",
     [
         (
             TypingTargetModel(
-                text='abc',  # dummy
-                text_hiragana_alphabet_symbol='abc',  # dummy
+                text="abc",  # dummy
+                text_hiragana_alphabet_symbol="abc",  # dummy
                 typing_target=[],
             ),
             True,
         ),
         (
             TypingTargetModel(
-                text='abc',  # dummy
-                text_hiragana_alphabet_symbol='abc',  # dummy
-                typing_target=[['c']],
+                text="abc",  # dummy
+                text_hiragana_alphabet_symbol="abc",  # dummy
+                typing_target=[["c"]],
             ),
             False,
         ),
-    ]
+    ],
 )
 def test_typing_is_done(
     typing_target: TypingTargetModel,
@@ -197,64 +196,61 @@ def test_typing_is_done(
 
 
 def test_typing_game_instantiation(typing_game_with_mocks: tuple[TypingGame, dict[str, mock.MagicMock]]):  # type: ignore # noqa
-
     # unpack
     typing_game, mocks = typing_game_with_mocks
 
     # assert
-    assert typing_game._sentence_generator is mocks['mock_sentence_generator']
-    assert typing_game._key_monitor is mocks['mock_key_monitor']
-    assert typing_game._ui is mocks['mock_user_interface']
-    assert typing_game._record_direc == mocks['mock_record_direc']
-    mocks['mock_os_make_dirs'].assert_called_once_with(mocks['mock_record_direc'], exist_ok=True)  # noqa
+    assert typing_game._sentence_generator is mocks["mock_sentence_generator"]
+    assert typing_game._key_monitor is mocks["mock_key_monitor"]
+    assert typing_game._ui is mocks["mock_user_interface"]
+    assert typing_game._record_direc == mocks["mock_record_direc"]
+    mocks["mock_os_make_dirs"].assert_called_once_with(mocks["mock_record_direc"], exist_ok=True)  # noqa
 
 
 def test_typing_game__show_typing_target(typing_game_with_mocks: tuple[TypingGame, dict[str, mock.MagicMock]]):  # noqa
-
     # unpack
     typing_game, mocks = typing_game_with_mocks
 
     # preparation
     typing_target = TypingTargetModel(
-        text='abc',
-        text_hiragana_alphabet_symbol='abc',
-        typing_target=[['a'], ['b'], ['c']],
+        text="abc",
+        text_hiragana_alphabet_symbol="abc",
+        typing_target=[["a"], ["b"], ["c"]],
     )
 
     # execute
     typing_game._show_typing_target(typing_target)
 
     # assert
-    mocks['mock_user_interface'].show_typing_target.assert_any_call(
+    mocks["mock_user_interface"].show_typing_target.assert_any_call(
         typing_target.text,
-        title='Typing Target',
+        title="Typing Target",
         color=typing_game._typing_target_text_color,
         title_color=typing_game._typing_target_title_color,
     )
-    mocks['mock_user_interface'].show_typing_target.assert_any_call(
+    mocks["mock_user_interface"].show_typing_target.assert_any_call(
         typing_target.text_hiragana_alphabet_symbol,
-        title='Typing Target (Hiragana)',
+        title="Typing Target (Hiragana)",
         color=typing_game._typing_target_text_color,
         title_color=typing_game._typing_target_title_color,
     )
-    mocks['mock_user_interface'].show_typing_target.assert_any_call(
+    mocks["mock_user_interface"].show_typing_target.assert_any_call(
         "".join([target[0] for target in typing_target.typing_target]),
-        title='Typing Target (Romaji)',
+        title="Typing Target (Romaji)",
         color=typing_game._typing_target_text_color,
         title_color=typing_game._typing_target_title_color,
     )
 
 
 def test_typing_game___initialize_typing_step(typing_game_with_mocks: tuple[TypingGame, dict[str, mock.MagicMock]]):  # noqa
-
     # unpack
     typing_game, mocks = typing_game_with_mocks
 
     # preparation
     typing_target = TypingTargetModel(
-        text='abc',
-        text_hiragana_alphabet_symbol='abc',
-        typing_target=[['a'], ['b'], ['c']],
+        text="abc",
+        text_hiragana_alphabet_symbol="abc",
+        typing_target=[["a"], ["b"], ["c"]],
     )
 
     # execute
@@ -264,19 +260,20 @@ def test_typing_game___initialize_typing_step(typing_game_with_mocks: tuple[Typi
     assert typing_game._TypingGame__current_typing_target is typing_target  # type: ignore  # noqa
     assert typing_game._TypingGame__current_records == []  # type: ignore
     typing_game._key_monitor.set_on_press_callback.assert_called_once_with(typing_game._TypingGame__on_press_callback)  # type: ignore # noqa
-    typing_game._key_monitor.set_on_release_callback.assert_called_once_with(typing_game._TypingGame__on_release_callback)  # type: ignore # noqa
+    typing_game._key_monitor.set_on_release_callback.assert_called_once_with(
+        typing_game._TypingGame__on_release_callback
+    )  # type: ignore # noqa
 
 
 def test_typing_game___clean_up_typing_step(typing_game_with_mocks: tuple[TypingGame, dict[str, mock.MagicMock]]):  # noqa
-
     # unpack
     typing_game, mocks = typing_game_with_mocks
 
     # preparation
     typing_target = TypingTargetModel(
-        text='abc',
-        text_hiragana_alphabet_symbol='abc',
-        typing_target=[['a'], ['b'], ['c']],
+        text="abc",
+        text_hiragana_alphabet_symbol="abc",
+        typing_target=[["a"], ["b"], ["c"]],
     )
     typing_game._TypingGame__initialize_typing_step(typing_target)  # type: ignore  # noqa
     typing_game._key_monitor.set_on_press_callback.reset_mock()  # type: ignore  # noqa
@@ -293,7 +290,6 @@ def test_typing_game___clean_up_typing_step(typing_game_with_mocks: tuple[Typing
 
 
 def test_typing_game__skip_typing_step(typing_game_with_mocks: tuple[TypingGame, dict[str, mock.MagicMock]]):  # noqa
-
     # unpack
     typing_game, _ = typing_game_with_mocks
 
@@ -302,14 +298,13 @@ def test_typing_game__skip_typing_step(typing_game_with_mocks: tuple[TypingGame,
 
     # assert
     typing_game._ui.system_anounce.assert_called_once_with(  # type: ignore  # noqa
-        'SKIP!',
+        "SKIP!",
         color=typing_game._system_anounce_color,
     )
     typing_game._key_monitor.stop.assert_called_once_with()  # type: ignore  # noqa
 
 
 def test_typing_game__done_typing_step(typing_game_with_mocks: tuple[TypingGame, dict[str, mock.MagicMock]]):  # noqa
-
     # unpack
     typing_game, _ = typing_game_with_mocks
 
@@ -318,14 +313,13 @@ def test_typing_game__done_typing_step(typing_game_with_mocks: tuple[TypingGame,
 
     # assert
     typing_game._ui.system_anounce.assert_called_once_with(  # type: ignore  # noqa
-        'DONE!',
+        "DONE!",
         color=typing_game._system_anounce_color,
     )
     typing_game._key_monitor.stop.assert_called_once_with()  # type: ignore  # noqa
 
 
 def test_typing_game__exit_typing_step(typing_game_with_mocks: tuple[TypingGame, dict[str, mock.MagicMock]]):  # noqa
-
     # unpack
     typing_game, mocks = typing_game_with_mocks
 
@@ -334,56 +328,56 @@ def test_typing_game__exit_typing_step(typing_game_with_mocks: tuple[TypingGame,
 
     # assert
     typing_game._ui.system_anounce.assert_called_once_with(  # type: ignore
-        'EXIT!',
+        "EXIT!",
         color=typing_game._system_anounce_color,
     )
     typing_game._key_monitor.stop.assert_called_once_with()  # type: ignore
-    mocks['mock_exit'].assert_called_once_with(-1)
+    mocks["mock_exit"].assert_called_once_with(-1)
 
 
 @pytest.mark.parametrize(
-    'key,typing_target,expected___current_typing_target,expected____current_records,expected',  # noqa
+    "key,typing_target,expected___current_typing_target,expected____current_records,expected",  # noqa
     [
         (
-            'a',
+            "a",
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["b"], ["c"]],
             ),
             [
                 RecordModel(
                     timestamp=FIXED_TIMESTAMP,
-                    pressed_key='a',
+                    pressed_key="a",
                     is_correct=True,
-                    correct_keys=['a'],
+                    correct_keys=["a"],
                 ),
             ],
             None,
         ),
         (
-            'z',
+            "z",
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             [
                 RecordModel(
                     timestamp=FIXED_TIMESTAMP,
-                    pressed_key='z',
+                    pressed_key="z",
                     is_correct=False,
-                    correct_keys=['a'],
+                    correct_keys=["a"],
                 ),
             ],
             None,
@@ -391,14 +385,14 @@ def test_typing_game__exit_typing_step(typing_game_with_mocks: tuple[TypingGame,
         (
             EMetaKey.ESC,
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             [],
             None,
@@ -406,14 +400,14 @@ def test_typing_game__exit_typing_step(typing_game_with_mocks: tuple[TypingGame,
         (
             EMetaKey.TAB,
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             [],
             None,
@@ -421,19 +415,19 @@ def test_typing_game__exit_typing_step(typing_game_with_mocks: tuple[TypingGame,
         (
             None,
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             [],
             None,
-        )
-    ]
+        ),
+    ],
 )
 def test_typing_game__on_press_callback(
     key: EMetaKey | str | None,
@@ -443,7 +437,6 @@ def test_typing_game__on_press_callback(
     expected: bool | None,
     typing_game_with_mocks: tuple[TypingGame, dict[str, mock.MagicMock]],
 ):
-
     # unpack
     typing_game, mocks = typing_game_with_mocks
 
@@ -458,31 +451,31 @@ def test_typing_game__on_press_callback(
 
 
 @pytest.mark.parametrize(
-    'key, current_typing_target, expected',
+    "key, current_typing_target, expected",
     [
         (
             EMetaKey.ESC,
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             False,
         ),
         (
             EMetaKey.TAB,
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             False,
         ),
         (
             EMetaKey.ESC,
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
                 typing_target=[],
             ),
             False,
@@ -490,8 +483,8 @@ def test_typing_game__on_press_callback(
         (
             EMetaKey.TAB,
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
                 typing_target=[],
             ),
             False,
@@ -499,40 +492,40 @@ def test_typing_game__on_press_callback(
         (
             None,
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             None,
         ),
         (
-            'a',
+            "a",
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             None,
         ),
         (
             None,
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
                 typing_target=[],
             ),
             False,
         ),
         (
-            'a',
+            "a",
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
                 typing_target=[],
             ),
             False,
         ),
-    ]
+    ],
 )
 def test_typing_game__on_release_callback(
     key: EMetaKey | str | None,
@@ -540,7 +533,6 @@ def test_typing_game__on_release_callback(
     expected: bool | None,
     typing_game_with_mocks: tuple[TypingGame, dict[str, mock.MagicMock]],
 ):
-
     # unpack
     typing_game, mocks = typing_game_with_mocks
 
@@ -553,52 +545,52 @@ def test_typing_game__on_release_callback(
 
 
 @pytest.mark.parametrize(
-    'typing_target, expected_output',
+    "typing_target, expected_output",
     [
         (
             TypingTargetModel(
-                text='abc',
-                text_hiragana_alphabet_symbol='abc',
-                typing_target=[['a'], ['b'], ['c']],
+                text="abc",
+                text_hiragana_alphabet_symbol="abc",
+                typing_target=[["a"], ["b"], ["c"]],
             ),
             OutputModel(
                 timestamp=FIXED_TIMESTAMP,
                 typing_target=TypingTargetModel(
-                    text='abc',
-                    text_hiragana_alphabet_symbol='abc',
-                    typing_target=[['a'], ['b'], ['c']],
+                    text="abc",
+                    text_hiragana_alphabet_symbol="abc",
+                    typing_target=[["a"], ["b"], ["c"]],
                 ),
                 records=[
                     # NOTE: `sorted` is stable sort.
                     # See https://docs.python.org/3/howto/sorting.html#sort-stability-and-complex-sorts  # noqa
                     RecordModel(
                         timestamp=FIXED_TIMESTAMP,
-                        pressed_key='a',
+                        pressed_key="a",
                         is_correct=True,
-                        correct_keys=['a'],
+                        correct_keys=["a"],
                     ),
                     RecordModel(
                         timestamp=FIXED_TIMESTAMP,
-                        pressed_key='b',
+                        pressed_key="b",
                         is_correct=True,
-                        correct_keys=['b'],
+                        correct_keys=["b"],
                     ),
                     RecordModel(
                         timestamp=FIXED_TIMESTAMP,
-                        pressed_key='z',
+                        pressed_key="z",
                         is_correct=False,
-                        correct_keys=['c'],
+                        correct_keys=["c"],
                     ),
                     RecordModel(
                         timestamp=FIXED_TIMESTAMP,
-                        pressed_key='c',
+                        pressed_key="c",
                         is_correct=True,
-                        correct_keys=['c'],
+                        correct_keys=["c"],
                     ),
                 ],
-            )
+            ),
         )
-    ]
+    ],
 )
 def test_typing_game__typing_step(
     typing_target: TypingTargetModel,
@@ -606,7 +598,6 @@ def test_typing_game__typing_step(
     typing_game_with_mocks: tuple[TypingGame, dict[str, mock.MagicMock]],
     mocker,
 ):
-
     # unpack
     typing_game, mocks = typing_game_with_mocks
     assert typing_game._TypingGame__current_typing_target is None  # type: ignore  # noqa
@@ -620,18 +611,15 @@ def test_typing_game__typing_step(
         for record in expected_output.records:
             typing_game._TypingGame__on_press_callback(record.pressed_key)  # type: ignore  # noqa
             typing_game._TypingGame__on_release_callback(record.pressed_key)  # type: ignore  # noqa
-            logging.debug(f'current records: {typing_game._TypingGame__current_records}')  # type: ignore  # noqa
+            logging.debug(f"current records: {typing_game._TypingGame__current_records}")  # type: ignore  # noqa
 
-    mocks['mock_key_monitor'].start = mocker.Mock(side_effect=emulate_pressing_keys)  # type: ignore  # noqa
+    mocks["mock_key_monitor"].start = mocker.Mock(side_effect=emulate_pressing_keys)  # type: ignore  # noqa
 
     # execute
     asyncio.run(typing_game._typing_step(typing_target))
 
     # assert
     typing_game._key_monitor.start.assert_called_once_with()  # type: ignore  # noqa
-    mocks['mock_json_dump'].assert_called_once_with(
-        expected_output.model_dump(mode='json'),
-        mocks['mock_open'].return_value,
-        indent=4,
-        ensure_ascii=False
+    mocks["mock_json_dump"].assert_called_once_with(
+        expected_output.model_dump(mode="json"), mocks["mock_open"].return_value, indent=4, ensure_ascii=False
     )
