@@ -52,11 +52,8 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
             model=model,
             temperature=temperature,
             max_retries=max_retry,
-            api_key=(
-                (lambda: openai_api_key)
-                if isinstance(openai_api_key, str)
-                else openai_api_key
-            ),
+            api_key=((lambda: openai_api_key) if isinstance(openai_api_key, str) else openai_api_key),
+            reasoning_effort="minimal" if model.startswith("gpt-5") else None,
             seed=seed,
         )
         self._agent = create_agent(
