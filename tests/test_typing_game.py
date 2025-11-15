@@ -260,9 +260,9 @@ def test_typing_game___initialize_typing_step(typing_game_with_mocks: tuple[Typi
     assert typing_game._TypingGame__current_typing_target is typing_target  # type: ignore  # noqa
     assert typing_game._TypingGame__current_records == []  # type: ignore
     typing_game._key_monitor.set_on_press_callback.assert_called_once_with(typing_game._TypingGame__on_press_callback)  # type: ignore # noqa
-    typing_game._key_monitor.set_on_release_callback.assert_called_once_with(
-        typing_game._TypingGame__on_release_callback
-    )  # type: ignore # noqa
+
+    on_release_callback_of_typing_game = typing_game._TypingGame__on_release_callback  # type: ignore # noqa
+    typing_game._key_monitor.set_on_release_callback.assert_called_once_with(on_release_callback_of_typing_game)  # type: ignore # noqa
 
 
 def test_typing_game___clean_up_typing_step(typing_game_with_mocks: tuple[TypingGame, dict[str, mock.MagicMock]]):  # noqa
@@ -446,7 +446,7 @@ def test_typing_game__on_press_callback(
 
     # assert
     assert typing_game._TypingGame__current_typing_target == expected___current_typing_target  # type: ignore  # noqa
-    assert typing_game._TypingGame__current_records == expected____current_records  # type: ignore  # noqa\
+    assert typing_game._TypingGame__current_records == expected____current_records  # type: ignore  # noqa
     assert actual == expected
 
 
