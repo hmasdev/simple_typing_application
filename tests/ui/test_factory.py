@@ -3,6 +3,7 @@ import pytest
 
 from simple_typing_application.const.user_interface import EUserInterfaceType
 from simple_typing_application.models.config_models.user_interface_config_model import (  # noqa
+    BaseUserInterfaceConfigModel,
     ConsoleUserInterfaceConfigModel,
 )
 from simple_typing_application.ui.cui import ConsoleUserInterface
@@ -42,25 +43,24 @@ def test_select_class_and_config_model_raise_value_error():
 
 
 @pytest.mark.parametrize(
-    "user_interface_type, user_interface_config_dict, expected_class",
+    "user_interface_type, user_interface_config, expected_class",
     [
         (
             EUserInterfaceType.CONSOLE,
-            ConsoleUserInterfaceConfigModel().model_dump(),
+            ConsoleUserInterfaceConfigModel(),
             ConsoleUserInterface,
         ),
         (
             EUserInterfaceType.CONSOLE,
-            {},
+            BaseUserInterfaceConfigModel(),
             ConsoleUserInterface,
         ),
     ],
 )
 def test_create_user_interface(
     user_interface_type: EUserInterfaceType,
-    user_interface_config_dict: dict[str, str | float | int | bool | None | dict | list],  # noqa
+    user_interface_config: BaseUserInterfaceConfigModel,
     expected_class: type,
-    mocker,
 ):
     # mock
     # for ConsoleUserInterface
@@ -69,7 +69,7 @@ def test_create_user_interface(
     # execute
     user_interface = create_user_interface(
         user_interface_type,
-        user_interface_config_dict,
+        user_interface_config,
     )
 
     # assert

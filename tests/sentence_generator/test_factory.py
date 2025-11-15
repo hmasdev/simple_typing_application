@@ -14,8 +14,9 @@ except ImportError:
 
 from simple_typing_application.const.sentence_generator import ESentenceGeneratorType  # noqa
 from simple_typing_application.models.config_models.sentence_generator_config_model import (  # noqa
-    OpenAISentenceGeneratorConfigModel,
+    BaseSentenceGeneratorConfigModel,
     HuggingfaceSentenceGeneratorConfigModel,
+    OpenAISentenceGeneratorConfigModel,
     StaticSentenceGeneratorConfigModel,
 )
 from simple_typing_application.sentence_generator.factory import (
@@ -67,26 +68,26 @@ def test_select_class_and_config_model_raise_value_error():
 
 
 @pytest.mark.parametrize(
-    "sentence_generator_type, sentence_generator_config_dict, expected_class",
+    "sentence_generator_type, sentence_generator_config, expected_class",
     [
         (
             ESentenceGeneratorType.OPENAI,
-            OpenAISentenceGeneratorConfigModel().model_dump(),
+            OpenAISentenceGeneratorConfigModel(),
             OpenaiSentenceGenerator,
         ),
         (
             ESentenceGeneratorType.STATIC,
-            StaticSentenceGeneratorConfigModel(text_kana_map={}).model_dump(),
+            StaticSentenceGeneratorConfigModel(text_kana_map={}),
             StaticSentenceGenerator,
         ),
         (
             ESentenceGeneratorType.OPENAI,
-            {},
+            BaseSentenceGeneratorConfigModel(),
             OpenaiSentenceGenerator,
         ),
         (
             ESentenceGeneratorType.STATIC,
-            {},
+            BaseSentenceGeneratorConfigModel(),
             StaticSentenceGenerator,
         ),
     ]
@@ -94,12 +95,12 @@ def test_select_class_and_config_model_raise_value_error():
         [
             (
                 ESentenceGeneratorType.HUGGINGFACE,
-                HuggingfaceSentenceGeneratorConfigModel().model_dump(),
+                HuggingfaceSentenceGeneratorConfigModel(),
                 HuggingfaceSentenceGenerator,
             ),
             (
                 ESentenceGeneratorType.HUGGINGFACE,
-                {},
+                BaseSentenceGeneratorConfigModel(),
                 HuggingfaceSentenceGenerator,
             ),
         ]
@@ -109,7 +110,7 @@ def test_select_class_and_config_model_raise_value_error():
 )
 def test_create_sentence_generator(
     sentence_generator_type: ESentenceGeneratorType,
-    sentence_generator_config_dict: dict[str, str | float | int | bool | None | dict | list],  # noqa
+    sentence_generator_config: BaseSentenceGeneratorConfigModel,
     expected_class: type,
     mocker,
 ):
@@ -131,7 +132,7 @@ def test_create_sentence_generator(
     # execute
     sentence_generator = create_sentence_generator(
         sentence_generator_type,
-        sentence_generator_config_dict,
+        sentence_generator_config,
     )
 
     # assert
