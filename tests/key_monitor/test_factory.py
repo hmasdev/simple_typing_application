@@ -48,7 +48,7 @@ def test_select_class_and_config_model_raise_value_error():
         ),
         (
             EKeyMonitorType.PYNPUT,
-            PynputBasedKeyMonitorConfigModel(),
+            BaseKeyMonitorConfigModel(),
             PynputBasedKeyMonitor,
         ),
         (
