@@ -97,11 +97,12 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
                 "content": self._user_prompt,
             },
         ]
-        self._logger.debug(f'agent input messages: {messages}')
-        ret: dict[str, Any] = await self._agent.ainvoke(
-            {"messages": messages},  # type: ignore
-        )
-        self._logger.debug(f'agent response: {ret}')
+        self._logger.debug(f"agent input messages: {messages}")
+        with stopwatch(level=DEBUG, logger=self._logger, prefix="OpenAI agent invocation"):
+            ret: dict[str, Any] = await self._agent.ainvoke(
+                {"messages": messages},
+            )  # type: ignore
+        self._logger.debug(f"agent response: {ret}")
 
         # store to memory
         output = cast(_OutputSchema, ret["structured_response"])
