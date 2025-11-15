@@ -35,7 +35,7 @@ def _select_class_and_config_model(sentence_generator_type: ESentenceGeneratorTy
 
 def create_sentence_generator(
     sentence_generator_type: ESentenceGeneratorType,
-    dict_config: dict[str, str | float | int | bool | None | dict | list],
+    config: BaseSentenceGeneratorConfigModel,
     logger: Logger = getLogger(__name__),
 ) -> BaseSentenceGenerator:
     # select sentence generator class and config model
@@ -50,7 +50,7 @@ def create_sentence_generator(
 
     # create sentence generator
     logger.debug(f"create {sentence_generator_cls.__name__}")
-    sentence_generator_config: BaseSentenceGeneratorConfigModel = sentence_generator_config_model(**dict_config)  # noqa
+    sentence_generator_config: BaseSentenceGeneratorConfigModel = sentence_generator_config_model(**config.model_dump())  # noqa
     sentence_generator: BaseSentenceGenerator = sentence_generator_cls(**sentence_generator_config.model_dump())  # type: ignore # noqa
 
     return sentence_generator
