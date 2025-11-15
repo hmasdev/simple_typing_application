@@ -40,7 +40,6 @@ def test_load_config_json(mocker):
     actual: ConfigModel = load_config(path)
 
     # postprocess
-    actual.sentence_generator_config.openai_api_key = "HERE_IS_YOUR_API_KEY"
 
     # assert
     actual_dic = actual.model_dump(exclude={"sentence_generator_config": {"openai_api_key"}})
