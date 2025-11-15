@@ -32,7 +32,7 @@ def typing_game_with_mocks(mocker) -> tuple[TypingGame, dict[str, mock.MagicMock
         mock_dt=mocker.patch("simple_typing_application.typing_game.dt"),
         mock_exit=mocker.patch("builtins.exit"),
         mock_record_direc="./dummy",
-        mock_open=mocker.patch("builtins.open", return_value=None),  # noqa
+        mock_open=mocker.patch("builtins.open", mocker.mock_open(read_data="")),  # noqa
         mock_json_dump=mocker.patch("simple_typing_application.typing_game.json.dump"),  # noqa
     )
     mocks["mock_dt"].now = mocker.Mock(return_value=FIXED_TIMESTAMP)

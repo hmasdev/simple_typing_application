@@ -26,7 +26,8 @@ def load_config(
     if os.path.splitext(path)[1] == ".json":
         logger.debug("load json config")
         try:
-            config = ConfigModel(**json.load(open(path, "r", encoding="utf-8")))  # type: ignore  # noqa
+            with open(path, "r", encoding="utf-8") as f:
+                config = ConfigModel(**json.load(f))  # type: ignore  # noqa
         except FileNotFoundError:
             logger.warning(f"config file not found: {path}. So use default config.")  # noqa
             config = ConfigModel()

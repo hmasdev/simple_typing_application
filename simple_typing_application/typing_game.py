@@ -148,9 +148,10 @@ class TypingGame:
         # post process
         output.records = sorted(list(self.__current_records), key=lambda x: x.timestamp)  # noqa
         self._logger.debug(f"The following data has been saved to {output_path}: {output.model_dump(mode='json')}")  # noqa
-        json.dump(
-            output.model_dump(mode="json"), open(output_path, "a", encoding="utf-8"), indent=4, ensure_ascii=False
-        )  # noqa
+        with open(output_path, "a", encoding="utf-8") as f:
+            json.dump(
+                output.model_dump(mode="json"), f, indent=4, ensure_ascii=False
+            )  # noqa
 
         # clean up
         self.__clean_up_typing_step()
