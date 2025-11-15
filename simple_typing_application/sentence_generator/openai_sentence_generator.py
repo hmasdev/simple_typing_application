@@ -1,6 +1,6 @@
 from __future__ import annotations
 from datetime import datetime as dt
-from logging import getLogger, Logger
+from logging import DEBUG, Logger, getLogger
 from typing import Any, Callable, cast
 
 from langchain.agents import create_agent
@@ -12,6 +12,7 @@ from ..models.typing_target_model import TypingTargetModel
 from .utils import split_hiraganas_alphabets_symbols, splitted_hiraganas_alphabets_symbols_to_typing_target  # noqa
 from ..utils.japanese_string_utils import delete_space_between_hiraganas
 from ..utils.rerun import rerun_deco
+from ..utils.stopwatch import stopwatch
 
 
 class _OutputSchema(BaseModel):
@@ -49,6 +50,7 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
             temperature=temperature,
             max_retries=max_retry,
             api_key=((lambda: openai_api_key) if isinstance(openai_api_key, str) else openai_api_key),
+            reasoning_effort="minimal" if model.startswith("gpt-5") else None,
             seed=seed,
         )
         self._agent = create_agent(
@@ -86,9 +88,10 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
             },
         ]
         self._logger.debug(f"agent input messages: {messages}")
-        ret: dict[str, Any] = await self._agent.ainvoke(
-            {"messages": messages},  # type: ignore
-        )
+        with stopwatch(level=DEBUG, logger=self._logger, prefix="OpenAI agent invocation"):
+            ret: dict[str, Any] = await self._agent.ainvoke(
+                {"messages": messages},
+            )  # type: ignore
         self._logger.debug(f"agent response: {ret}")
 
         # store to memory
