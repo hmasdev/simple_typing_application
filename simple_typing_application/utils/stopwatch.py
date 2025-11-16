@@ -80,7 +80,6 @@ def stopwatch_deco(
 
     Args:
         func (Callable[P, T]): function to be decorated.
-        *,
         level (int, optional): log level. Defaults to logging.INFO.
             Must be one of logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL.
         prefix (str | None, optional): prefix of the log message. Defaults to None.
@@ -105,8 +104,7 @@ def stopwatch_deco(
     """Decorator to measure the execution time of a function.
 
     Args:
-        func (Callable[P, T], optional): function to be decorated. Defaults to None.
-        *,
+        func (None): Not used in this overload. This signature is for parameterized decoration (e.g., @stopwatch_deco(level=DEBUG)).
         level (int, optional): log level. Defaults to logging.INFO.
             Must be one of logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL.
         prefix (str | None, optional): prefix of the log message. Defaults to None.
@@ -131,7 +129,6 @@ def stopwatch_deco(
 
     Args:
         func (Callable[P, T], optional): function to be decorated. Defaults to None.
-        *,
         level (int, optional): log level. Defaults to logging.INFO.
             Must be one of logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL.
         prefix (str | None, optional): prefix of the log message. Defaults to None.
