@@ -11,7 +11,7 @@ class BaseSentenceGeneratorConfigModel(BaseModel):
 
 
 class OpenAISentenceGeneratorConfigModel(BaseSentenceGeneratorConfigModel):
-    model: str = "gpt-4o-mini"
+    model: str = "gpt-5-nano"
     temperature: float = 0.7
     openai_api_key: SecretStr | None = os.getenv("OPENAI_API_KEY")  # type: ignore  # noqa
     memory_size: int = 0

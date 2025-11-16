@@ -22,7 +22,7 @@
 
 ## Requirements
 
-- **Python >= 3.10** (Python 3.10, 3.11, 3.12, 3.13, and 3.14 are supported)
+- **Python >= 3.10** (Python 3.10, 3.11, 3.12, and 3.13 are supported)
 
 - **Dependencies** (automatically installed):
   - `click`
@@ -135,7 +135,7 @@ The content of `./sample_config.json` is as follows:
 {
     "sentence_generator_type": "OPENAI",
     "sentence_generator_config": {
-        "model": "gpt-4o-mini",
+        "model": "gpt-5-nano",
         "temperature": 0.7,
         "openai_api_key": "HERE_IS_YOUR_API_KEY",
         "memory_size": 0,
@@ -160,7 +160,7 @@ OPENAI_API_KEY={HERE_IS_YOUR_API_KEY}
 
 You can specify the following as `sentence_generator_type`:
 
-- **`OPENAI`**: Use OpenAI API to generate typing targets (recommended: `gpt-4o-mini`, `gpt-4o`, or `gpt-4-turbo`)
+- **`OPENAI`**: Use OpenAI API to generate typing targets (recommended: `gpt-5-nano`, `gpt-4o`, or `gpt-4-turbo`)
 - **`HUGGINGFACE`**: Use models available on HuggingFace to generate typing targets
 - **`STATIC`**: Use predefined typing targets that you have specified
 
@@ -187,7 +187,7 @@ For each `sentence_generator_type`, you can specify the detailed parameters as `
 
 To see the default values, see [`./simple_typing_application/models/config_models/sentence_generator_config_model.py`](./simple_typing_application/models/config_models/sentence_generator_config_model.py).
 
-> **💡 Tip**: For best results, we recommend using `gpt-4o-mini` (fast and cost-effective) or `gpt-4o` (most capable) for OpenAI models.
+> **💡 Tip**: For best results, we recommend using `gpt-5-nano` (fast and cost-effective) or `gpt-4o` (most capable) for OpenAI models.
 
 #### 🖥️ User Interface
 
