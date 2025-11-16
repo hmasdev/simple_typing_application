@@ -5,7 +5,6 @@ import json
 from logging import getLogger, Logger
 import os
 
-
 from .const.color import EColor
 from .const.keys import EMetaKey
 from .key_monitor.base import BaseKeyMonitor
@@ -93,6 +92,39 @@ class TypingGame:
 
         os.makedirs(self._record_direc, exist_ok=True)
 
+        self._ui.system_anounce(self.title)
+        self._ui.system_anounce(self.instructions)
+
+    @property
+    def title(self) -> str:
+        from . import __version__
+
+        title_line = f"   Simple Typing Application {__version__}   "
+        return "\n".join(
+            [
+                "=" * len(title_line),
+                "",
+                title_line,
+                "",
+                "=" * len(title_line),
+            ]
+        )
+
+    @property
+    def instructions(self) -> str:
+        return """Type the displayed characters as quickly and accurately as possible!
+
+- How to Play:
+  1. A typing target will be displayed on the screen.
+  2. Type the characters exactly as shown.
+  3. Your input will be displayed in real-time, with correct inputs shown in green and incorrect inputs in red.
+  4. Once you complete the typing target, a new one will be generated automatically.
+
+Key Commands:
+  - Press 'Esc' to exit the game at any time.
+  - Press 'Tab' to skip the current typing target.
+"""
+
     def start(self):
         asyncio.run(self._main_loop())
 
@@ -110,6 +142,7 @@ class TypingGame:
             typing_target, _ = await asyncio.gather(task1, task2)
 
     def _show_typing_target(self, typing_target: TypingTargetModel):
+        self._ui.system_anounce("")
         self._ui.show_typing_target(
             typing_target.text,
             title="Typing Target",
@@ -149,9 +182,7 @@ class TypingGame:
         output.records = sorted(list(self.__current_records), key=lambda x: x.timestamp)  # noqa
         self._logger.debug(f"The following data has been saved to {output_path}: {output.model_dump(mode='json')}")  # noqa
         with open(output_path, "a", encoding="utf-8") as f:
-            json.dump(
-                output.model_dump(mode="json"), f, indent=4, ensure_ascii=False
-            )  # noqa
+            json.dump(output.model_dump(mode="json"), f, indent=4, ensure_ascii=False)  # noqa
 
         # clean up
         self.__clean_up_typing_step()
