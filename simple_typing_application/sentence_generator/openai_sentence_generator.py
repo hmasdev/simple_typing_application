@@ -90,8 +90,8 @@ class OpenaiSentenceGenerator(BaseSentenceGenerator):
         self._logger.debug(f"agent input messages: {messages}")
         with stopwatch(level=DEBUG, logger=self._logger, prefix="OpenAI agent invocation"):
             ret: dict[str, Any] = await self._agent.ainvoke(
-                {"messages": messages},
-            )  # type: ignore
+                {"messages": messages},  # type: ignore
+            )
         self._logger.debug(f"agent response: {ret}")
 
         # store to memory
