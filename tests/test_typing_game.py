@@ -294,10 +294,11 @@ def test_typing_game__skip_typing_step(typing_game_with_mocks: tuple[TypingGame,
     typing_game, _ = typing_game_with_mocks
 
     # execute
+    typing_game._ui.system_anounce.reset_mock()  # type: ignore  # noqa
     typing_game._TypingGame__skip_typing_step()  # type: ignore
 
     # assert
-    typing_game._ui.system_anounce.assert_called_with(  # type: ignore  # noqa
+    typing_game._ui.system_anounce.assert_called_once_with(  # type: ignore  # noqa
         "SKIP!",
         color=typing_game._system_anounce_color,
     )
@@ -309,10 +310,11 @@ def test_typing_game__done_typing_step(typing_game_with_mocks: tuple[TypingGame,
     typing_game, _ = typing_game_with_mocks
 
     # execute
+    typing_game._ui.system_anounce.reset_mock()  # type: ignore  # noqa
     typing_game._TypingGame__done_typing_step()  # type: ignore
 
     # assert
-    typing_game._ui.system_anounce.assert_called_with(  # type: ignore  # noqa
+    typing_game._ui.system_anounce.assert_called_once_with(  # type: ignore  # noqa
         "DONE!",
         color=typing_game._system_anounce_color,
     )
@@ -324,10 +326,11 @@ def test_typing_game__exit_typing_step(typing_game_with_mocks: tuple[TypingGame,
     typing_game, mocks = typing_game_with_mocks
 
     # execute
+    typing_game._ui.system_anounce.reset_mock()  # type: ignore  # noqa
     typing_game._TypingGame__exit_typing_step()  # type: ignore
 
     # assert
-    typing_game._ui.system_anounce.assert_called_with(  # type: ignore
+    typing_game._ui.system_anounce.assert_called_once_with(  # type: ignore
         "EXIT!",
         color=typing_game._system_anounce_color,
     )
