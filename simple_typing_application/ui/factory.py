@@ -32,10 +32,11 @@ def create_user_interface(
 
     # create user interface
     logger.debug(f"create {user_interface_cls.__name__}")
+    user_interface_config: BaseUserInterfaceConfigModel
     if isinstance(config, user_interface_config_model):
-        user_interface_config: BaseUserInterfaceConfigModel = config
+        user_interface_config = config
     else:
-        user_interface_config: BaseUserInterfaceConfigModel = user_interface_config_model(**config.model_dump())  # noqa
+        user_interface_config = user_interface_config_model(**config.model_dump())  # noqa
     user_interface: BaseUserInterface = user_interface_cls(**user_interface_config.model_dump())  # type: ignore # noqa
 
     return user_interface
