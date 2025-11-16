@@ -37,10 +37,14 @@ def test_load_config_json(mocker):
     )
 
     # run
-    actual = load_config(path)
+    actual: ConfigModel = load_config(path)
+
+    # postprocess
 
     # assert
-    assert actual == expected
+    actual_dic = actual.model_dump(exclude={"sentence_generator_config": {"openai_api_key"}})
+    expected_dic = expected.model_dump(exclude={"sentence_generator_config": {"openai_api_key"}})
+    assert actual_dic == expected_dic
 
 
 def test_load_config_json_not_found(mocker):

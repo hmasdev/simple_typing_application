@@ -3,6 +3,7 @@ import pytest
 
 from simple_typing_application.const.key_monitor import EKeyMonitorType  # noqa
 from simple_typing_application.models.config_models.key_monitor_config_model import (  # noqa
+    BaseKeyMonitorConfigModel,
     SSHKeyboardBasedKeyMonitorConfigModel,
     PynputBasedKeyMonitorConfigModel,
 )
@@ -38,26 +39,29 @@ def test_select_class_and_config_model_raise_value_error():
 
 
 @pytest.mark.parametrize(
-    "key_monitor_type, key_monitor_config_dict, expected_class",
+    "key_monitor_type, key_monitor_config, expected_class",
     [
         (
             EKeyMonitorType.PYNPUT,
-            PynputBasedKeyMonitorConfigModel().model_dump(),
+            PynputBasedKeyMonitorConfigModel(),
             PynputBasedKeyMonitor,
         ),
         (
             EKeyMonitorType.PYNPUT,
-            {},
+            BaseKeyMonitorConfigModel(),
             PynputBasedKeyMonitor,
         ),
-        (EKeyMonitorType.SSHKEYBOARD, SSHKeyboardBasedKeyMonitorConfigModel().model_dump(), SSHKeyboardBasedKeyMonitor),  # noqa
+        (
+            EKeyMonitorType.SSHKEYBOARD,
+            SSHKeyboardBasedKeyMonitorConfigModel(),
+            SSHKeyboardBasedKeyMonitor,
+        ),  # noqa
     ],
 )
 def test_create_key_monitor(
     key_monitor_type: EKeyMonitorType,
-    key_monitor_config_dict: dict[str, str | float | int | bool | None | dict | list],  # noqa
+    key_monitor_config: BaseKeyMonitorConfigModel,
     expected_class: type,
-    mocker,
 ):
     # mock
     # for PynputBasedKeyMonitor
@@ -66,7 +70,7 @@ def test_create_key_monitor(
     # execute
     key_monitor = create_key_monitor(
         key_monitor_type,
-        key_monitor_config_dict,
+        key_monitor_config,
     )
 
     # assert

@@ -24,7 +24,7 @@ def _select_class_and_config_model(key_monitor_type: EKeyMonitorType) -> tuple[t
 
 def create_key_monitor(
     key_monitor_type: EKeyMonitorType,
-    dict_config: dict[str, str | float | int | bool | None | dict | list],
+    config: BaseKeyMonitorConfigModel,
     logger: Logger = getLogger(__name__),
 ) -> BaseKeyMonitor:
     # select key monitor class and config model
@@ -37,7 +37,10 @@ def create_key_monitor(
 
     # create key monitor
     logger.debug(f"create {key_monitor_cls.__name__}")
-    key_monitor_config: BaseKeyMonitorConfigModel = key_monitor_config_model(**dict_config)  # noqa
+    if isinstance(config, key_monitor_config_model):
+        key_monitor_config: BaseKeyMonitorConfigModel = config
+    else:
+        key_monitor_config: BaseKeyMonitorConfigModel = key_monitor_config_model(**config.model_dump())  # noqa
     key_monitor: BaseKeyMonitor = key_monitor_cls(**key_monitor_config.model_dump())  # type: ignore # noqa
 
     return key_monitor
