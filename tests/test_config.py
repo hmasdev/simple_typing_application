@@ -19,7 +19,7 @@ def test_load_config_json(mocker):
         **{
             "sentence_generator_type": "OPENAI",
             "sentence_generator_config": {
-                "model": "gpt-3.5-turbo-16k",
+                "model": "gpt-5-nano",
                 "temperature": 0.7,
                 "openai_api_key": "HERE_IS_YOUR_API_KEY",
                 "memory_size": 1,
