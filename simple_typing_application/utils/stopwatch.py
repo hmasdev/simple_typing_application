@@ -3,7 +3,7 @@ import time
 from contextlib import contextmanager
 from functools import wraps, partial
 from logging import Logger, getLogger
-from typing import Callable, Generator, TypeVar, ParamSpec
+from typing import Callable, Generator, TypeVar, ParamSpec, overload
 
 T = TypeVar("T")
 P = ParamSpec("P")
@@ -67,8 +67,9 @@ def stopwatch(
         log_func(log_msg_fmt.format(elapsed_time=end_time - start_time))
 
 
+@overload
 def stopwatch_deco(
-    func: Callable[P, T] | None = None,
+    func: Callable[P, T],
     *,
     level: int = logging.INFO,
     prefix: str | None = None,
@@ -78,8 +79,56 @@ def stopwatch_deco(
     """Decorator to measure the execution time of a function.
 
     Args:
+        func (Callable[P, T]): function to be decorated.
+        level (int, optional): log level. Defaults to logging.INFO.
+            Must be one of logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL.
+        prefix (str | None, optional): prefix of the log message. Defaults to None.
+        postfix (str, optional): postfix of the log message. Defaults to "".
+        logger (Logger, optional): logger. Defaults to logger.
+
+    Returns:
+        Callable[P, T]: decorated function.
+    """  # noqa
+    ...
+
+
+@overload
+def stopwatch_deco(
+    func: None = None,
+    *,
+    level: int = logging.INFO,
+    prefix: str | None = None,
+    postfix: str = "",
+    logger: Logger = logger,
+) -> Callable[[Callable[P, T]], Callable[P, T]]:
+    """Decorator to measure the execution time of a function.
+
+    Args:
+        func (None): Not used in this overload. This signature is for parameterized decoration (e.g., @stopwatch_deco(level=DEBUG)).
+        level (int, optional): log level. Defaults to logging.INFO.
+            Must be one of logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL.
+        prefix (str | None, optional): prefix of the log message. Defaults to None.
+        postfix (str, optional): postfix of the log message. Defaults to "".
+        logger (Logger, optional): logger. Defaults to logger.
+
+    Returns:
+        Callable[[Callable[P, T]], Callable[P, T]]: decorator.
+    """  # noqa
+    ...
+
+
+def stopwatch_deco(
+    func: Callable[P, T] | None = None,
+    *,
+    level: int = logging.INFO,
+    prefix: str | None = None,
+    postfix: str = "",
+    logger: Logger = logger,
+) -> Callable[P, T] | Callable[[Callable[P, T]], Callable[P, T]]:
+    """Decorator to measure the execution time of a function.
+
+    Args:
         func (Callable[P, T], optional): function to be decorated. Defaults to None.
-        *,
         level (int, optional): log level. Defaults to logging.INFO.
             Must be one of logging.DEBUG, logging.INFO, logging.WARNING, logging.ERROR, logging.CRITICAL.
         prefix (str | None, optional): prefix of the log message. Defaults to None.
