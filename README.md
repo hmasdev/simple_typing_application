@@ -1,4 +1,6 @@
-# Simple Typing Application: To Measure Your Typing Performance
+# 🎯 Simple Typing Application
+
+**Measure and Improve Your Typing Performance with AI-Powered Practice**
 
 ![GitHub top language](https://img.shields.io/github/languages/top/hmasdev/simple_typing_application)
 ![GitHub tag (latest SemVer)](https://img.shields.io/github/v/tag/hmasdev/simple_typing_application?sort=semver)
@@ -9,15 +11,25 @@
 
 ![application image](./pics/application.png)
 
-## Requires
+## ✨ Features
 
-- Python >= 3.8
+- 🤖 **AI-Powered Sentence Generation**: Use OpenAI's GPT models or HuggingFace models to generate dynamic typing targets
+- 📊 **Performance Tracking**: Detailed recording of your typing performance with timestamps and accuracy metrics
+- 🌐 **Multi-Language Support**: Full support for Japanese (Hiragana, Katakana, Kanji) and English
+- ⌨️ **Flexible Input**: Multiple correct input patterns (e.g., both 'ti' and 'chi' for 'ち')
+- 🎨 **Console Interface**: Clean, distraction-free typing practice environment
+- 📈 **Data Analysis Ready**: Export records in JSON format for detailed analysis with pandas/matplotlib
 
+## Requirements
+
+- **Python >= 3.10** (Python 3.10, 3.11, 3.12, 3.13, and 3.14 are supported)
+
+- **Dependencies** (automatically installed):
   - `click`
-  - `langchain`
+  - `langchain` (>= 1.0)
   - `langchain_openai`
   - `openai`
-  - `pydantic`
+  - `pydantic` (>= 2.0)
   - `pynput`
   - `python-dotenv`
   - `requests`
@@ -25,55 +37,89 @@
   - `types-pynput`
   - `types-requests`
 
-- OpenAI API Key
+- **OpenAI API Key** (required for AI-generated typing targets)
 
-See `pyproject.toml` for detail information.
+See [`pyproject.toml`](./pyproject.toml) for detailed information.
 
 ## Installation
 
-You can install `simple_typing_application` with pip or uv.
+### Quick Install (Recommended)
 
-Using pip:
+The recommended way to install is using [uv](https://docs.astral.sh/uv/), a fast Python package installer:
+
+```bash
+# Clone the repository
+git clone https://github.com/hmasdev/simple_typing_application.git
+cd simple_typing_application
+
+# Install with uv (recommended)
+uv sync
+```
+
+This will install all dependencies and set up the application for use.
+
+### Alternative Installation Methods
+
+#### Using pip
 
 ```bash
 pip install git+https://github.com/hmasdev/simple_typing_application.git
 ```
 
-Using uv:
-
-```bash
-uv pip install git+https://github.com/hmasdev/simple_typing_application.git
-```
-
-If you want to install the full-version, i.e. `simple_typing_application` with data analysis packages like `pandas`, `matplotlib` and `jupyterlab`, specify `[extra]`.
-
-Using pip:
-
-```bash
-git clone https://github.com/hmasdev/simple_typing_application.git
-cd simple_typing_application
-pip install .[extra]
-```
-
-Using uv:
-
-```bash
-git clone https://github.com/hmasdev/simple_typing_application.git
-cd simple_typing_application
-uv pip install .[extra]
-```
+#### Install with Optional Dependencies
 
 You can specify the following optional dependencies:
 
-- `[huggingface]`
-- `[extra]`
-- `[dev]`
+- **`[extra]`**: Data analysis packages (`pandas`, `matplotlib`, `jupyterlab`, `seaborn`)
+- **`[huggingface]`**: HuggingFace models support (`torch`, `transformers`, etc.)
+- **`[dev]`**: Development tools (`pytest`, `mypy`, `ruff`, etc.)
+
+**Using uv** (recommended):
+
+```bash
+git clone https://github.com/hmasdev/simple_typing_application.git
+cd simple_typing_application
+
+# Install with specific optional dependencies
+uv sync --extra extra --extra huggingface
+```
+
+**Using pip**:
+
+```bash
+git clone https://github.com/hmasdev/simple_typing_application.git
+cd simple_typing_application
+
+# Install with optional dependencies
+pip install ".[extra,huggingface]"
+```
 
 For more details, see [`./pyproject.toml`](./pyproject.toml).
 
+## 🚀 Quick Start
+
+1. **Clone and install**:
+   ```bash
+   git clone https://github.com/hmasdev/simple_typing_application.git
+   cd simple_typing_application
+   uv sync
+   ```
+
+2. **Set up your OpenAI API key**:
+   ```bash
+   echo "OPENAI_API_KEY=your-api-key-here" > .env
+   ```
+
+3. **Run the application**:
+   ```bash
+   python -m simple_typing_application
+   ```
+
+4. **Start typing!** Follow the on-screen prompts and improve your typing skills.
+
 ## Usage
 
-### Configuration
+### ⚙️ Configuration
 
 You can specify some parameters with '.json'.
 
@@ -89,7 +135,7 @@ The content of `./sample_config.json` is as follows:
 {
     "sentence_generator_type": "OPENAI",
     "sentence_generator_config": {
-        "model": "gpt-3.5-turbo-16k",
+        "model": "gpt-4o-mini",
         "temperature": 0.7,
         "openai_api_key": "HERE_IS_YOUR_API_KEY",
         "memory_size": 0,
@@ -110,13 +156,13 @@ In this case, you should add an environment variable `OPENAI_API_KEY` which cont
 OPENAI_API_KEY={HERE_IS_YOUR_API_KEY}
 ```
 
-#### Sentence Generator
+#### 🤖 Sentence Generator
 
-You can specify the followings as `sentence_generator_type`:
+You can specify the following as `sentence_generator_type`:
 
-- `OPENAI`: Use OpenAI API to generate typing targets;
-- `HUGGINGFACE`: Use the model available in HuggingFace to generate typing targets;
-- `STATIC`: Use typing targets which you have specified.
+- **`OPENAI`**: Use OpenAI API to generate typing targets (recommended: `gpt-4o-mini`, `gpt-4o`, or `gpt-4-turbo`)
+- **`HUGGINGFACE`**: Use models available on HuggingFace to generate typing targets
+- **`STATIC`**: Use predefined typing targets that you have specified
 
 For each `sentence_generator_type`, you can specify the detailed parameters as `sentence_generator_config`:
 
@@ -141,7 +187,9 @@ For each `sentence_generator_type`, you can specify the detailed parameters as `
 
 To see the default values, see [`./simple_typing_application/models/config_models/sentence_generator_config_model.py`](./simple_typing_application/models/config_models/sentence_generator_config_model.py).
 
-#### User Interface
+> **💡 Tip**: For best results, we recommend using `gpt-4o-mini` (fast and cost-effective) or `gpt-4o` (most capable) for OpenAI models.
+
+#### 🖥️ User Interface
 
 You can specify the followings as `user_interface_type`:
 
@@ -154,7 +202,7 @@ For each `user_interface_type`, you can specify the detailed parameters as `user
 
 To see the default values, see [`./simple_typing_application/models/config_models/user_interface_config_model.py`](./simple_typing_application/models/config_models/user_interface_config_model.py).
 
-#### Key Monitor
+#### ⌨️ Key Monitor
 
 You can specity the followings as `key_monitor_type`:
 
@@ -170,7 +218,7 @@ For each `key_monitor_type`, you can specify the detailed parameters as `key_mon
 
 To see the default values, see [`./simple_typing_application/models/config_models/key_monitor_config_model.py`](./simple_typing_application/models/config_models/key_monitor_config_model.py).
 
-### Launch the application
+### 🎮 Launch the Application
 
 You can launch this application with the following command:
 
@@ -186,19 +234,19 @@ python -m simple_typing_application -c HERE_IS_YOUR_CONFIG_FILE --debug
 
 For more details, run `python -m simple_typing_application --help`.
 
-### Do typing
+### ✍️ Typing Practice
 
-`simple_typing_application` shows typing targets through the interface which you has specified.
+`simple_typing_application` shows typing targets through the interface which you have specified.
 Type correct keys.
-Note that `Typing Target (Romaji)` displayed in your interface is one of correct typing patterns. For example, when `Typing Target (Hiragana)` is 'ち', both 'ti' and 'chi' are correct although only one of them is displayed.
 
-In addition to normal typing, the following keys can be accepted:
+> **📝 Note**: The `Typing Target (Romaji)` displayed in your interface is one of the correct typing patterns. For example, when `Typing Target (Hiragana)` is 'ち', both 'ti' and 'chi' are correct, although only one of them is displayed.
 
-- `Esc`: to quit the application;
-- `Ctrl+c`: to quit the application;
-- `Tab`: to skip the current typing target.
+**Available keyboard shortcuts**:
 
-### Analyze Your Typing Performance
+- `Esc` or `Ctrl+c`: Quit the application
+- `Tab`: Skip the current typing target
+
+### 📊 Analyze Your Typing Performance
 
 The application records your typing in the following format in the directory specified in you config file for each typing target.
 
@@ -222,9 +270,9 @@ The application records your typing in the following format in the directory spe
 }
 ```
 
-Refer to [`./sample_record.json`](./sample_record.json) for example.
+Refer to [`./sample_record.json`](./sample_record.json) for an example.
 
-## Development
+## 🛠️ Development
 
 1. Fork this repository:
    - [https://github.com/hmasdev/simple_typing_application/fork](https://github.com/hmasdev/simple_typing_application/fork)
@@ -290,19 +338,19 @@ Refer to [`./sample_record.json`](./sample_record.json) for example.
 10. Create a new Pull Request:
     - [https://github.com/hmasdev/simple_typing_application/compare](https://github.com/hmasdev/simple_typing_application/compare)
 
-Thank you for your contribution!
+Thank you for your contribution! 🙏
 
-## LICENSE
+## 📄 LICENSE
 
 `simple_typing_application` is licensed under the [MIT](./LICENSE) License. See the LICENSE file for more details.
 
-## References
+## 📚 References
 
 - [1] <a id="langchain.chat_models.openai.ChatOpenAI"></a> https://api.python.langchain.com/en/latest/chat_models/langchain.chat_models.openai.ChatOpenAI.html
 - [2] <a id="langchain.memory.buffer.ConversationBufferMemory"></a> https://api.python.langchain.com/en/latest/memory/langchain.memory.buffer.ConversationBufferMemory.html
 - [3] <a id="huggingface_models_available_text_generation"></a> https://huggingface.co/models?pipeline_tag=text-generation
 - [4] <a id="huggingface_pipeline_tutorial"></a> https://huggingface.co/docs/transformers/pipeline_tutorial
 
-## Authors
+## 👨‍💻 Authors
 
 - [hmasdev](https://github.com/hmasdev)
