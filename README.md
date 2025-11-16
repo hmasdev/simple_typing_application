@@ -322,6 +322,13 @@ Refer to [`./sample_record.json`](./sample_record.json) for an example.
    uv run mypy tests
    ```
 
+   (Optional) Format code:
+
+   ```bash
+   uv run ruff format simple_typing_application
+   uv run ruff format tests
+   ```
+
 8. Commit your changes:
 
    ```bash
